@@ -8,7 +8,9 @@ import java.util.*;
  * Creation by GustavoMG on 17/05/2018.
  */
 public class ActivityStore {
-    /** Singleton instance of ConversationStore. */
+    /**
+     * Singleton instance of ConversationStore.
+     */
     private static ActivityStore instance;
 
     /**
@@ -24,51 +26,46 @@ public class ActivityStore {
 
     List<Activity> activities;
 
-    /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
+    /**
+     * This class is a singleton, so its constructor is private. Call getInstance() instead.
+     */
     private ActivityStore() {
+        this.activities = getActivityList();
+        activities.sort((Activity a, Activity b) -> -a.getTimeStamp().compareTo(b.getTimeStamp()));
+    }
+
+    // Todo: getActivityList should retrieve from PersistentDataStor
+    private List<Activity> getActivityList() {
+        List<Activity> activities = new ArrayList<>();
+
         List<Conversation> conversations = ConversationStore.getInstance().getAllConversations();
-        Map<UUID, Conversation> conversationMap= new HashMap<>();
-        for(Conversation conversation : conversations) conversationMap.put(conversation.getId(), conversation);
+        for (Conversation conversation : conversations) {
+            Activity activity = new Activity(Activity.Type.ConversationCreated, conversation.getId(), conversation.getCreationTime());
+            activities.add(activity);
+        }
 
         List<User> users = UserStore.getInstance().getAllUsers();
-        Map<UUID, User> userMap = new HashMap<>();
-        for(User user : users) userMap.put(user.getId(), user);
+        for (User user : users) {
+            Activity activity = new Activity(Activity.Type.UserJoined, user.getId(), user.getCreationTime());
+            activities.add(activity);
+        }
 
         List<Message> messages = MessageStore.getInstance().getAllMessages();
-
-        List<Creation> creationList = new ArrayList<>();
-        creationList.addAll(conversations);
-        creationList.addAll(users);
-        creationList.addAll(messages);
-        creationList.sort((Creation a, Creation b)->-a.getCreationTime().compareTo(b.getCreationTime()));
-
-        Activity.Builder activityBuilder = Activity.Builder.getInstance();
-        activities = new ArrayList<>();
-        for (Creation creation : creationList) {
-            if(creation.getClass() == User.class) {
-                User user = (User) creation;
-                Activity activity = activityBuilder.userJoined(user);
-                activities.add(activity);
-            }
-            if(creation.getClass() == Conversation.class) {
-                Conversation conversation = (Conversation) creation;
-                User user = userMap.get(conversation.getOwnerId());
-                Activity activity = activityBuilder.conversationCreated(user, conversation);
-                activities.add(activity);
-            }
-            if(creation.getClass() == Message.class) {
-                Message message = (Message) creation;
-                User user = userMap.get(message.getAuthorId());
-                Conversation conversation = conversationMap.get(message.getConversationId());
-                Activity activity = activityBuilder.messageSent(user, conversation, message);
-                activities.add(activity);
-            }
+        for (Message message : messages) {
+            Activity activity = new Activity(Activity.Type.MessageSent, message.getId(), message.getCreationTime());
+            activities.add(activity);
         }
+
+        return activities;
     }
 
     public List<Activity> getActivities(int offSet, int maxElements) {
-        int indexTo = Math.min(activities.size(), offSet+maxElements);
-        return activities.subList(offSet, indexTo);
-    }
+        int indexTo = Math.min(activities.size(), offSet + maxElements);
+        try {
+            return activities.subList(offSet, indexTo);
+        } catch (Exception ex) {
+            return null;
+        }
 
+    }
 }

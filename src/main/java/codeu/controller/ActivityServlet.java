@@ -2,7 +2,6 @@ package codeu.controller;
 
 import codeu.model.data.Activity;
 import codeu.model.store.basic.ActivityStore;
-import com.google.appengine.repackaged.com.google.gson.Gson;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

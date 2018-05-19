@@ -89,4 +89,17 @@ public class MessageStore {
   public void setMessages(List<Message> messages) {
     this.messages = messages;
   }
+
+    public List<Message> getAllMessages() {
+      return messages;
+    }
+
+  public Message getMessage(UUID messageId) {
+    for(Message message : messages) {
+      if(message.getId().equals(messageId)) {
+        return message;
+      }
+    }
+    return null;
+  }
 }

@@ -35,6 +35,7 @@ List<Activity> activities = (List<Activity>) request.getAttribute("activities");
 
 </head>
 <body>
+  <%@ include file="../component/activity-formatter.jsp" %>
 
   <%@ include file="../component/navbar.jsp" %>
 
@@ -45,11 +46,21 @@ List<Activity> activities = (List<Activity>) request.getAttribute("activities");
 
     <div id="activity-board">
       <ul>
-      <% for (Activity activity : activities) { %>
-        <li>
-          <%= activity %>
-        </li>
-      <% } %>
+      <% for (Activity activity : activities) {
+        out.print("<li>");
+        switch (activity.getType()) {
+          case UserJoined:
+            out.print(userJoined(activity));
+            break;
+          case ConversationCreated:
+            out.print(conversationCreated(activity));
+            break;
+          case MessageSent:
+            out.print(messageSent(activity));
+            break;
+        }
+        out.print("</li>");
+      } %>
       </ul>
     </div>
 
