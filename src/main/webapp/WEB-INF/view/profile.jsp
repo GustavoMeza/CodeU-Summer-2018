@@ -13,8 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
+<%@ page import="codeu.model.data.User" %>
 <%
 String username = (String) request.getAttribute("username");
+User user = (User) request.getAttribute("user");
 %>
 
 <!DOCTYPE html>
@@ -36,11 +38,11 @@ String username = (String) request.getAttribute("username");
   <%@ include file="../component/navbar.jsp" %>
 
   <div id="container">
-    <h1><%= username %> Profile Page</h1>
+    <h1><%= username %>'s Profile Page</h1>
     <hr/>
     <h2>About <%= username %></h2>
 
-    <p> I like dogs and cats
+    <p><%= user.getAboutMe()%>
     </p>
 
     <h3>Edit your About Me (Only you can see this)</h3>
@@ -52,7 +54,9 @@ String username = (String) request.getAttribute("username");
     </form>
 
     <hr/>
+    <h1><%= username %>'s Sent Messages</h1>
 
+    <hr/>
 
   </div>
 </body>

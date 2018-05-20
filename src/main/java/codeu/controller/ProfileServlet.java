@@ -60,14 +60,16 @@ public class ProfileServlet extends HttpServlet {
     String requestUrl = request.getRequestURI();
     String username = requestUrl.substring("/users/".length());
 
+    User user = userStore.getUser(username);
     request.setAttribute("username", username);
+    request.setAttribute("user", user);
     request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
-    String username = (String) request.getSession().getAttribute("/users/");
+    String username = (String) request.getSession().getAttribute("user");
     // if (username == null) {
     //   // user is not logged in, don't let them add a message
     //   response.sendRedirect("/login");
@@ -81,12 +83,12 @@ public class ProfileServlet extends HttpServlet {
     //   return;
     //}
 
-
     String aboutMeContent = request.getParameter("About Me");
 
     // this removes any HTML from the message content
     String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
-
+    user.setAboutMe(cleanedAboutMeContent);
+    userStore.updateUser(user);
     //messageStore.addMessage(message);
 
     // redirect to a GET request
