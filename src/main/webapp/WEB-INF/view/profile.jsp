@@ -45,15 +45,12 @@ String username = (String) request.getAttribute("username");
 
     <h3>Edit your About Me (Only you can see this)</h3>
 
-
-    <form action="/conversations" method="POST">
-        <div class="form-group">
-
-        <textarea name="Text1" cols="40" rows="5"></textarea>
-      </div>
-
-      <button type="submit">Submit</button>
+    <form action="/users/<%= username %>" method="POST">
+        <textarea name="About Me" cols="40" rows="5"></textarea>
+        <br/>
+        <button type="submit">Submit</button>
     </form>
+
     <hr/>
 
 

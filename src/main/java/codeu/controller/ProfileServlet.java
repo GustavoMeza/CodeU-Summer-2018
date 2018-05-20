@@ -21,6 +21,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -60,6 +62,35 @@ public class ProfileServlet extends HttpServlet {
 
     request.setAttribute("username", username);
     request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+
+    String username = (String) request.getSession().getAttribute("/users/");
+    // if (username == null) {
+    //   // user is not logged in, don't let them add a message
+    //   response.sendRedirect("/login");
+    //   return;
+    //}
+
+    User user = userStore.getUser(username);
+    // if (user == null) {
+    //   // user was not found, don't let them add a message
+    //   response.sendRedirect("/login");
+    //   return;
+    //}
+
+
+    String aboutMeContent = request.getParameter("About Me");
+
+    // this removes any HTML from the message content
+    String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
+
+    //messageStore.addMessage(message);
+
+    // redirect to a GET request
+    response.sendRedirect("/users/" + username);
   }
 
 
