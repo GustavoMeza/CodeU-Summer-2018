@@ -8,4 +8,5 @@
     <% } %>
     <a href="/activity">Activity</a>
     <a href="/about.jsp">About</a>
+    <a href="/admin">Admin</a>
 </nav>
