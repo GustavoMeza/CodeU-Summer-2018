@@ -127,8 +127,9 @@ public class UserStore {
     this.users = users;
   }
 
-    public List<User> getAllUsers() {
-      return users;
-    }
+  /** Returns the entire list of users, use with caution. Expensive! */
+  public List<User> getAllUsers() {
+    return users;
+  }
 }
 

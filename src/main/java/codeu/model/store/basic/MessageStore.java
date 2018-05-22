@@ -90,11 +90,14 @@ public class MessageStore {
     this.messages = messages;
   }
 
-    public List<Message> getAllMessages() {
+  /** Returns all the messages, use with caution. Expensive! */
+  public List<Message> getAllMessages() {
       return messages;
     }
 
+  /** Finds and returns the Message with the given Id */
   public Message getMessage(UUID messageId) {
+    // This approach will be pretty slow if we have many Messages.
     for(Message message : messages) {
       if(message.getId().equals(messageId)) {
         return message;

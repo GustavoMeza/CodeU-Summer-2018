@@ -65,7 +65,7 @@ public class ConversationStore {
     conversations = new ArrayList<>();
   }
 
-/** Access the current set of conversations known to the application. */
+  /** Access the current set of conversations known to the application. */
   public List<Conversation> getAllConversations() {
     return conversations;
   }
@@ -102,12 +102,14 @@ public class ConversationStore {
     this.conversations = conversations;
   }
 
-    public Conversation getConversation(UUID conversationId) {
-      for(Conversation conversation : conversations) {
-        if(conversation.getId().equals(conversationId)) {
-          return conversation;
-        }
+  /** Find and return the Conversation with the given Id */
+  public Conversation getConversation(UUID conversationId) {
+    // This approach will be pretty slow if we have many Conversations.
+    for(Conversation conversation : conversations) {
+      if(conversation.getId().equals(conversationId)) {
+        return conversation;
       }
-      return null;
     }
+    return null;
+  }
 }
