@@ -79,6 +79,20 @@ public class MessageStoreTest {
     Mockito.verify(mockPersistentStorageAgent).writeThrough(inputMessage);
   }
 
+  @Test
+  public void testGetMessage_ById_found() {
+    Message message = messageStore.getMessage(MESSAGE_ONE.getId());
+
+    assertEquals(message, MESSAGE_ONE);
+  }
+
+  @Test
+  public void testGetMessage_ById_notFound() {
+    Message message = messageStore.getMessage(UUID.randomUUID());
+
+    Assert.assertNull(message);
+  }
+
   private void assertEquals(Message expectedMessage, Message actualMessage) {
     Assert.assertEquals(expectedMessage.getId(), actualMessage.getId());
     Assert.assertEquals(expectedMessage.getConversationId(), actualMessage.getConversationId());

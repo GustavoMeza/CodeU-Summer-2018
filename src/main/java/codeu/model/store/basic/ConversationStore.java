@@ -18,6 +18,7 @@ import codeu.model.data.Conversation;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -64,7 +65,7 @@ public class ConversationStore {
     conversations = new ArrayList<>();
   }
 
-/** Access the current set of conversations known to the application. */
+  /** Access the current set of conversations known to the application. */
   public List<Conversation> getAllConversations() {
     return conversations;
   }
@@ -99,5 +100,16 @@ public class ConversationStore {
   /** Sets the List of Conversations stored by this ConversationStore. */
   public void setConversations(List<Conversation> conversations) {
     this.conversations = conversations;
+  }
+
+  /** Find and return the Conversation with the given Id */
+  public Conversation getConversation(UUID conversationId) {
+    // This approach will be pretty slow if we have many Conversations.
+    for(Conversation conversation : conversations) {
+      if(conversation.getId().equals(conversationId)) {
+        return conversation;
+      }
+    }
+    return null;
   }
 }

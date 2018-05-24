@@ -134,5 +134,10 @@ public class UserStore {
   public void setUsers(List<User> users) {
     this.users = users;
   }
+
+  /** Returns the entire list of users, use with caution. Expensive! */
+  public List<User> getAllUsers() {
+    return users;
+  }
 }
 
