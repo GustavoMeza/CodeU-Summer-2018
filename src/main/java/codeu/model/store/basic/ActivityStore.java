@@ -79,7 +79,7 @@ public class ActivityStore {
         }
 
         // Sort from most recent to oldest, expensive if many activities!
-        activities.sort((Activity a, Activity b)->-a.getFiringTime().compareTo(b.getFiringTime()));
+        activities.sort((Activity a, Activity b)->-a.getCreatedAt().compareTo(b.getCreatedAt()));
 
         // Would never be null
         this.activities = activities;

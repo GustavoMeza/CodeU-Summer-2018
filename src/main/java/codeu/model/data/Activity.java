@@ -20,19 +20,19 @@ public class Activity {
 
     private final Type type;
     private final UUID objectId;
-    private final Instant firingTime;
+    private final Instant createdAt;
 
     /**
      * Constructs a new Activity.
      *
      * @param type the type of activity
      * @param objectId the ID of the object that the activity refers to.
-     * @param firingTime the instant when the activity was fired.
+     * @param createdAt the instant when the activity was fired.
      */
-    public Activity(Type type, UUID objectId, Instant firingTime) {
+    public Activity(Type type, UUID objectId, Instant createdAt) {
         this.type = type;
         this.objectId = objectId;
-        this.firingTime = firingTime;
+        this.createdAt = createdAt;
     }
 
     /** Returns the type of activity */
@@ -46,7 +46,7 @@ public class Activity {
     }
 
     /** Returns the instant when the activity was fired */
-    public Instant getFiringTime() {
-        return firingTime;
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 }

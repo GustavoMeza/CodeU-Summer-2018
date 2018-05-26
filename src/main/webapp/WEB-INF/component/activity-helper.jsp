@@ -15,20 +15,25 @@ public static final String errorMessage = "Error loading activity";
 
 // Builds and returns the layout for an activity of the type UserJoined
 public String userJoined(Activity activity) {
+    UUID userId = activity.getObjectId();
+    User user = UserStore.getInstance().getUser(userId);
+    if(user == null) return errorMessage;
+
     StringBuilder sBuilder = new StringBuilder();
-    sBuilder.append(formatCreationTime(activity.getFiringTime()));
-    sBuilder.append(formatUserName(activity.getObjectId()));
+    sBuilder.append(formatCreationTime(activity.getCreatedAt()));
+    sBuilder.append(formatUserName(userId));
     sBuilder.append(" joined!");
     return sBuilder.toString();
 }
 
 // Builds and returns the layout for an activity of the type ConversationCreated
 public String conversationCreated(Activity activity) {
-    StringBuilder sBuilder = new StringBuilder();
     UUID conversationId = activity.getObjectId();
     Conversation conversation = ConversationStore.getInstance().getConversation(conversationId);
     if(conversation == null) return errorMessage;
-    sBuilder.append(formatCreationTime(activity.getFiringTime()));
+
+    StringBuilder sBuilder = new StringBuilder();
+    sBuilder.append(formatCreationTime(activity.getCreatedAt()));
     sBuilder.append(formatUserName(conversation.getOwnerId()));
     sBuilder.append(" created a new conversation: ");
     sBuilder.append(formatConversation(conversationId));
@@ -37,11 +42,12 @@ public String conversationCreated(Activity activity) {
 
 // Builds and returns the layout for an activity of the type MessageSent
 public String messageSent(Activity activity) {
-    StringBuilder sBuilder = new StringBuilder();
     UUID messageId = activity.getObjectId();
     Message message = MessageStore.getInstance().getMessage(messageId);
     if(message == null) return errorMessage;
-    sBuilder.append(formatCreationTime(activity.getFiringTime()));
+
+    StringBuilder sBuilder = new StringBuilder();
+    sBuilder.append(formatCreationTime(activity.getCreatedAt()));
     sBuilder.append(formatUserName(message.getAuthorId()));
     sBuilder.append(" sent a message in ");
     sBuilder.append(formatConversation(message.getConversationId()));
@@ -62,14 +68,15 @@ public String formatCreationTime(Instant time) {
 // Reusable method that returns the layout for the user.
 public String formatUserName(UUID userId) {
     User user = UserStore.getInstance().getUser(userId);
-    if(user == null) return errorMessage;
-    return user.getName();
+    if(user == null) return "UserNotFound";
+    String userLink = String.format("/users/%s", user.getName());
+    return String.format("<a href=\"%s\">%s</a>", userLink, user.getName());
 }
 
 // Reusable method that returns the layout for the conversation.
 public String formatConversation(UUID conversationId) {
     Conversation conversation = ConversationStore.getInstance().getConversation(conversationId);
-    if(conversation == null) return errorMessage;
+    if(conversation == null) return "ConversationNotFound";
     String conversationLink = String.format("/chat/%s", conversation.getTitle());
     return String.format("<a href=\"%s\">%s</a>", conversationLink, conversation.getTitle());
 }
@@ -77,7 +84,7 @@ public String formatConversation(UUID conversationId) {
 // Reusable method that returns the layout for the message.
 public String formatMessage(UUID messageId) {
     Message message = MessageStore.getInstance().getMessage(messageId);
-    if(message == null) return errorMessage;
+    if(message == null) return "MessageNotFound";
     return String.format("\"%s\"", message.getContent());
 }
 %>

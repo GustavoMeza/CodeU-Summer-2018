@@ -112,6 +112,6 @@ public class ActivityStoreTest {
     private void assertEquals(Activity expectedActivity, Activity actualActivity) {
         Assert.assertEquals(expectedActivity.getType(), actualActivity.getType());
         Assert.assertEquals(expectedActivity.getObjectId(), actualActivity.getObjectId());
-        Assert.assertEquals(expectedActivity.getFiringTime(), actualActivity.getFiringTime());
+        Assert.assertEquals(expectedActivity.getCreatedAt(), actualActivity.getCreatedAt());
     }
 }
