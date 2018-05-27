@@ -32,6 +32,9 @@ public class ProfileServlet extends HttpServlet {
   /** Store class that gives access to Users. */
   private UserStore userStore;
 
+  /** Store class that gives access to Messages. */
+  // private MessageStore messageStore;
+
   /**
    * Set up state for handling profile-related requests. This method is only called when running in a
    * server, not when running in a test.
@@ -40,6 +43,7 @@ public class ProfileServlet extends HttpServlet {
   public void init() throws ServletException {
     super.init();
     setUserStore(UserStore.getInstance());
+    // setMessageStore(MessageStore.getInstance());
   }
 
   /**
@@ -49,6 +53,13 @@ public class ProfileServlet extends HttpServlet {
   void setUserStore(UserStore userStore) {
     this.userStore = userStore;
   }
+  /**
+   * Sets the MessageStore used by this servlet. This function provides a common setup method for
+   * use by the test framework or the servlet's init() function.
+   */
+  // void setMessageStore(MessageStore messageStore) {
+  //   this.messageStore = messageStore;
+  // }
 
   /**
    * This function fires when a user requests the /profile URL. It simply forwards the request to
@@ -59,29 +70,20 @@ public class ProfileServlet extends HttpServlet {
       throws IOException, ServletException {
     String requestUrl = request.getRequestURI();
     String username = requestUrl.substring("/users/".length());
-
     User user = userStore.getUser(username);
+
     request.setAttribute("username", username);
     request.setAttribute("user", user);
     request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
   }
 
+  @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
     String username = (String) request.getSession().getAttribute("user");
-    // if (username == null) {
-    //   // user is not logged in, don't let them add a message
-    //   response.sendRedirect("/login");
-    //   return;
-    //}
 
     User user = userStore.getUser(username);
-    // if (user == null) {
-    //   // user was not found, don't let them add a message
-    //   response.sendRedirect("/login");
-    //   return;
-    //}
 
     String aboutMeContent = request.getParameter("About Me");
 
@@ -89,7 +91,7 @@ public class ProfileServlet extends HttpServlet {
     String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
     user.setAboutMe(cleanedAboutMeContent);
     userStore.updateUser(user);
-    //messageStore.addMessage(message);
+
 
     // redirect to a GET request
     response.sendRedirect("/users/" + username);

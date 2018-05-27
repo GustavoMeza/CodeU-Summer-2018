@@ -42,7 +42,8 @@ User user = (User) request.getAttribute("user");
     <hr/>
     <h2>About <%= username %></h2>
 
-    <p><%= user.getAboutMe()%>
+    <p>
+      <%= user.getAboutMe()%>
     </p>
 
     <h3>Edit your About Me (Only you can see this)</h3>
@@ -55,6 +56,11 @@ User user = (User) request.getAttribute("user");
 
     <hr/>
     <h1><%= username %>'s Sent Messages</h1>
+
+    <div style="overflow: auto; width:300px; height:200px;">
+        text here....
+    </div>
+
 
     <hr/>
 
