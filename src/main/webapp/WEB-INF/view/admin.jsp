@@ -20,9 +20,11 @@
 
       <% if(request.getAttribute("error") != null){ %>
           <h2 style="color:red"><%= request.getAttribute("error") %></h2>
+      <% } else{ %>
+          <p>Number of Users: <%= request.getAttribute("numberOfUsers") %></p>
+          <p>Number of Conversations: <%= request.getAttribute("numberOfConversations") %></p>
+          <p>Number of Messages: <%= request.getAttribute("numberOfMessages") %></p>
       <% } %>
-
-
     </div>
   </div>
 </body>

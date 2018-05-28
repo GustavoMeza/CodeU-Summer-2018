@@ -69,6 +69,11 @@ public class ConversationStore {
   public List<Conversation> getAllConversations() {
     return conversations;
   }
+  
+  /** Returns the total number of converstations stored*/
+  public int numberOfConversations(){
+      return conversations.size();
+    }
 
   /** Add a new conversation to the current set of conversations known to the application. */
   public void addConversation(Conversation conversation) {

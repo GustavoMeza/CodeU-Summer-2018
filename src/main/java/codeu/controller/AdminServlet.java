@@ -5,7 +5,11 @@
 package codeu.controller;
 
 import codeu.model.data.User;
+import codeu.model.data.Conversation;
+import codeu.model.data.Message;
 import codeu.model.store.basic.UserStore;
+import codeu.model.store.basic.ConversationStore;
+import codeu.model.store.basic.MessageStore;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
@@ -23,11 +27,19 @@ public class AdminServlet extends HttpServlet {
   /** Store class that gives access to Users. */
   private UserStore userStore;
 
+  /** Store class that gives access to Conversations. */
+  private ConversationStore conversationStore;
+
+  /** Store class that gives access to Messages. */
+  private MessageStore messageStore;
+
   /** Set up state for handling chat requests. */
   @Override
   public void init() throws ServletException {
     super.init();
     setUserStore(UserStore.getInstance());
+    setConversationStore(ConversationStore.getInstance());
+    setMessageStore(MessageStore.getInstance());
   }
 
   /**
@@ -36,6 +48,22 @@ public class AdminServlet extends HttpServlet {
    */
   void setUserStore(UserStore userStore) {
     this.userStore = userStore;
+  }
+
+  /**
+   * Sets the ConversationStore used by this servlet. This function provides a common setup method for use
+   * by the test framework or the servlet's init() function.
+   */
+  void setConversationStore(ConversationStore conversationStore) {
+    this.conversationStore = conversationStore;
+  }
+
+  /**
+   * Sets the MessageStore used by this servlet. This function provides a common setup method for use
+   * by the test framework or the servlet's init() function.
+   */
+  void setMessageStore(MessageStore messageStore) {
+    this.messageStore = messageStore;
   }
 
   /**
@@ -48,6 +76,10 @@ public class AdminServlet extends HttpServlet {
       throws IOException, ServletException {
 
     String username = (String) request.getSession().getAttribute("user");
+
+    request.setAttribute("numberOfUsers", userStore.numberOfUsers());
+    request.setAttribute("numberOfConversations", conversationStore.numberOfConversations());
+    request.setAttribute("numberOfMessages", messageStore.numberOfMessages());
 
     if (username == null) {
       // user is not logged in, don't let them add a message

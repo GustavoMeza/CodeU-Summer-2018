@@ -103,4 +103,21 @@ public class PersistentStorageAgent {
   public void writeThrough(Message message) {
     persistentDataStore.writeThrough(message);
   }
+
+
+  /** Retrieve the number of messages stored in the database. */
+  /*public int numberOfUsers(){
+    return persistentDataStore.loadUsers.size();
+  }*/
+
+  /** Retrieve the number of messages stored in the database. */
+/*  public int numberOfConversations(){
+    return persistentDataStore.loadConversations.size();
+  }*/
+
+  /** Retrieve the number of messages stored in the database. */
+  /*public int numberOfMessages(){
+    return persistentDataStore.loadMessages.size();
+  }*/
+
 }

@@ -139,5 +139,8 @@ public class UserStore {
   public List<User> getAllUsers() {
     return users;
   }
-}
 
+  public int numberOfUsers(){
+    return users.size();
+  }
+}

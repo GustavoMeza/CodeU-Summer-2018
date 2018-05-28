@@ -95,6 +95,11 @@ public class MessageStore {
       return messages;
     }
 
+  /** Returns the total number of messages stored*/
+  public int numberOfMessages(){
+      return messages.size();
+    }
+
   /** Finds and returns the Message with the given Id */
   public Message getMessage(UUID messageId) {
     // This approach will be pretty slow if we have many Messages.
