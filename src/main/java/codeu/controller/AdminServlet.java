@@ -77,6 +77,26 @@ public class AdminServlet extends HttpServlet {
 
     String username = (String) request.getSession().getAttribute("user");
 
+    List<Message> messages = messageStore.getAllMessages();
+    List<User> users = userStore.getAllUsers();
+    int currentCount = 0;
+    int maxCount = 0;
+    String mostActiveUser =  null;
+    for (Message message : messages) {
+      currentCount=0;
+      for(User user : users){
+        String author = UserStore.getInstance()
+         .getUser(message.getAuthorId()).getName();
+         if(author.equals(user.getName())){
+           currentCount++;
+           if(currentCount > maxCount){
+             maxCount = currentCount;
+             mostActiveUser = author;
+           }
+         }
+       }
+    }
+    request.setAttribute("mostActiveUser", mostActiveUser);
     request.setAttribute("numberOfUsers", userStore.numberOfUsers());
     request.setAttribute("numberOfConversations", conversationStore.numberOfConversations());
     request.setAttribute("numberOfMessages", messageStore.numberOfMessages());
