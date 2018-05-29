@@ -121,7 +121,7 @@ public class UserStore {
 
   /** Return true if the given username is known as an admin user to the application. */
   public boolean isUserAdmin(String username){
-    if(username.equals("adillinger")){
+    if(username.equals("admin")){
       return true;
     }
     return false;
