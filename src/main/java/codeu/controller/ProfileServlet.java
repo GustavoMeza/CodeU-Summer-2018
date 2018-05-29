@@ -14,9 +14,15 @@
 
 package codeu.controller;
 
+import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +39,7 @@ public class ProfileServlet extends HttpServlet {
   private UserStore userStore;
 
   /** Store class that gives access to Messages. */
-  // private MessageStore messageStore;
+  private MessageStore messageStore;
 
   /**
    * Set up state for handling profile-related requests. This method is only called when running in a
@@ -43,7 +49,7 @@ public class ProfileServlet extends HttpServlet {
   public void init() throws ServletException {
     super.init();
     setUserStore(UserStore.getInstance());
-    // setMessageStore(MessageStore.getInstance());
+    setMessageStore(MessageStore.getInstance());
   }
 
   /**
@@ -57,9 +63,9 @@ public class ProfileServlet extends HttpServlet {
    * Sets the MessageStore used by this servlet. This function provides a common setup method for
    * use by the test framework or the servlet's init() function.
    */
-  // void setMessageStore(MessageStore messageStore) {
-  //   this.messageStore = messageStore;
-  // }
+  void setMessageStore(MessageStore messageStore) {
+     this.messageStore = messageStore;
+   }
 
   /**
    * This function fires when a user requests the /profile URL. It simply forwards the request to
@@ -68,10 +74,27 @@ public class ProfileServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+
     String requestUrl = request.getRequestURI();
     String username = requestUrl.substring("/users/".length());
-    User user = userStore.getUser(username);
 
+    User user = userStore.getUser(username);
+    if (user == null){
+      //redirects user to the login page if user is not logged in
+      response.sendRedirect("/login");
+      return;
+    }
+
+    UUID userID = UserStore.getInstance().getUser(username).getId();
+    if (userID == null){
+      //redirects to login page if there is no user id
+      response.sendRedirect("/login");
+      return;
+    }
+
+    List<Message> messagesByUser = messageStore.getMessagesByUser(userID);
+
+    request.setAttribute("messagesByUser", messagesByUser);
     request.setAttribute("username", username);
     request.setAttribute("user", user);
     request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
@@ -86,6 +109,8 @@ public class ProfileServlet extends HttpServlet {
     User user = userStore.getUser(username);
 
     String aboutMeContent = request.getParameter("About Me");
+
+    String messageContent = request.getParameter("messagesByUser");
 
     // this removes any HTML from the message content
     String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());

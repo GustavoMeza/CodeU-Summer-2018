@@ -14,9 +14,20 @@
   limitations under the License.
 --%>
 <%@ page import="codeu.model.data.User" %>
+<%@ page import="java.util.List" %>
+<%@ page import="codeu.model.data.Conversation" %>
+<%@ page import="codeu.model.data.Message" %>
+<%@ page import="codeu.model.store.basic.UserStore" %>
+<%@ page import="codeu.model.store.basic.MessageStore" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.time.Instant" %>
+<%@ page import="java.time.ZonedDateTime" %>
+<%@ page import="java.time.ZoneId" %>
+<%@ page import="java.time.ZoneOffset" %>
 <%
 String username = (String) request.getAttribute("username");
 User user = (User) request.getAttribute("user");
+List<Message> messagesByUser = (List<Message>) request.getAttribute("messagesByUser");
 %>
 
 <!DOCTYPE html>
@@ -26,11 +37,26 @@ User user = (User) request.getAttribute("user");
   <link rel="stylesheet" href="/css/main.css">
 
   <style>
-  textarea
-  {
-    width:100%;
-  }
+    textarea {
+      width:100%;
+    }
   </style>
+
+  <style>
+    #chat {
+      backgorund-color: white;
+      height: 500px;
+      width: 750px;
+      overflow-y: scroll
+    }
+  </style>
+
+  <script>
+    function scrollChat(){
+      var chatDiv = document.getElementById('chat');
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    };
+  </script>
 
 </head>
 <body>
@@ -57,12 +83,20 @@ User user = (User) request.getAttribute("user");
     <hr/>
     <h1><%= username %>'s Sent Messages</h1>
 
-    <div style="overflow: auto; width:300px; height:200px;">
-        text here....
+    <div id="chat">
+      <ul>
+        <% for (Message message : messagesByUser) {
+          Instant time = message.getCreationTime();
+          String creation = DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC).format(time);
+        %>
+          <li><strong><%= creation %>:</strong> <%= message.getContent() %></li>
+          <% } %>
+        </ul>
     </div>
 
 
     <hr/>
+
 
   </div>
 </body>
