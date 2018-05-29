@@ -67,24 +67,19 @@ public class AdminServlet extends HttpServlet {
   }
 
   /**
-   * This function fires when a user navigates to the admin page. It gets the administration title from
-   * the URL, finds the most current statistics.
-   * It then forwards to admin.jsp for rendering.
+   * Loops through the messages and users and counts which user has sent the
+   * most messages in all conversations.
+   * @return String with the username of the most active user
    */
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-
-    String username = (String) request.getSession().getAttribute("user");
-
+  private String getMostActiveUser() {
     List<Message> messages = messageStore.getAllMessages();
     List<User> users = userStore.getAllUsers();
     int currentCount = 0;
     int maxCount = 0;
     String mostActiveUser =  null;
-    for (Message message : messages) {
+    for (User user : users) {
       currentCount=0;
-      for(User user : users){
+      for(Message message : messages){
         String author = UserStore.getInstance()
          .getUser(message.getAuthorId()).getName();
          if(author.equals(user.getName())){
@@ -96,7 +91,54 @@ public class AdminServlet extends HttpServlet {
          }
        }
     }
-    request.setAttribute("mostActiveUser", mostActiveUser);
+    return mostActiveUser;
+  }
+
+  /**
+   * Loops through the messages and users and counts which user has used the
+   * most characters in their messages-the wordiest user
+   * @return String with the username of the wordiest user
+   */
+  private String getWordiestUser() {
+    List<Message> messages = messageStore.getAllMessages();
+    List<User> users = userStore.getAllUsers();
+    int currentCount = 0;
+    int maxCount = 0;
+    String wordiestUser =  null;
+    for (User user : users) {
+      currentCount=0;
+      for(Message message : messages){
+        String author = UserStore.getInstance()
+         .getUser(message.getAuthorId()).getName();
+         if(author.equals(user.getName())){
+           currentCount = currentCount + message.getContent().length();
+           if(currentCount > maxCount){
+             maxCount = currentCount;
+             wordiestUser = author;
+           }
+         }
+       }
+    }
+    return wordiestUser;
+  }
+
+  /**
+   * This function fires when a user navigates to the admin page. It gets the administration title from
+   * the URL, finds the most current statistics.
+   * It then forwards to admin.jsp for rendering.
+   */
+  @Override
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+
+    String username = (String) request.getSession().getAttribute("user");
+
+    List<User> users = userStore.getAllUsers();
+    String newestUser = users.get(users.size()-1).getName();
+
+    request.setAttribute("mostActiveUser", getMostActiveUser());
+    request.setAttribute("wordiestUser", getWordiestUser());
+    request.setAttribute("newestUser", newestUser);
     request.setAttribute("numberOfUsers", userStore.numberOfUsers());
     request.setAttribute("numberOfConversations", conversationStore.numberOfConversations());
     request.setAttribute("numberOfMessages", messageStore.numberOfMessages());
