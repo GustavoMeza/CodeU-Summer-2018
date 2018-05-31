@@ -44,7 +44,7 @@ List<Message> messagesByUser = (List<Message>) request.getAttribute("messagesByU
 
   <style>
     #chat {
-      backgorund-color: white;
+      background-color: white;
       height: 500px;
       width: 750px;
       overflow-y: scroll

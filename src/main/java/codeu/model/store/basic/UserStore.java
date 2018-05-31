@@ -119,12 +119,25 @@ public class UserStore {
     return false;
   }
 
+  /** Return true if the given username is known as an admin user to the application. */
+  public boolean isUserAdmin(String username){
+    if(username.equals("adillinger")){
+      return true;
+    }
+    return false;
+  }
+
   /**
    * Sets the List of Users stored by this UserStore. This should only be called once, when the data
    * is loaded from Datastore.
    */
   public void setUsers(List<User> users) {
     this.users = users;
+  }
+
+  /** Returns the entire list of users, use with caution. Expensive! */
+  public List<User> getAllUsers() {
+    return users;
   }
 }
 
