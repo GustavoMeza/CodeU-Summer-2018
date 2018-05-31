@@ -90,7 +90,7 @@ public class MessageStore {
     this.messages = messages;
   }
 
-  /** Returns all the messages, use with caution. Expensive! */
+  /** Returns all the messages, use with caution. */
   public List<Message> getAllMessages() {
       return messages;
     }

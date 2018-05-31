@@ -21,6 +21,6 @@ public class ActivityTest {
 
         Assert.assertEquals(objectId, activity.getObjectId());
         Assert.assertEquals(type, activity.getType());
-        Assert.assertEquals(firingTime, activity.getFiringTime());
+        Assert.assertEquals(firingTime, activity.getCreatedAt());
     }
 }
