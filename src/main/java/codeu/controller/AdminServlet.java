@@ -72,24 +72,17 @@ public class AdminServlet extends HttpServlet {
    * @return String with the username of the most active user
    */
   private String getMostActiveUser() {
-    List<Message> messages = messageStore.getAllMessages();
     List<User> users = userStore.getAllUsers();
     int currentCount = 0;
     int maxCount = 0;
     String mostActiveUser =  null;
     for (User user : users) {
-      currentCount=0;
-      for(Message message : messages){
-        String author = UserStore.getInstance()
-         .getUser(message.getAuthorId()).getName();
-         if(author.equals(user.getName())){
-           currentCount++;
-           if(currentCount > maxCount){
-             maxCount = currentCount;
-             mostActiveUser = author;
-           }
-         }
-       }
+      List<Message> userMessages = messageStore.getMessagesFromUser(user);
+      currentCount = userMessages.size();
+      if(currentCount > maxCount){
+        maxCount = currentCount;
+        mostActiveUser = user.getName();
+      }
     }
     return mostActiveUser;
   }
@@ -100,25 +93,20 @@ public class AdminServlet extends HttpServlet {
    * @return String with the username of the wordiest user
    */
   private String getWordiestUser() {
-    List<Message> messages = messageStore.getAllMessages();
     List<User> users = userStore.getAllUsers();
     int currentCount = 0;
     int maxCount = 0;
     String wordiestUser =  null;
     for (User user : users) {
-      currentCount=0;
-      for(Message message : messages){
-        String author = UserStore.getInstance()
-         .getUser(message.getAuthorId()).getName();
-         if(author.equals(user.getName())){
-           currentCount = currentCount + message.getContent().length();
-           if(currentCount > maxCount){
-             maxCount = currentCount;
-             wordiestUser = author;
-           }
-         }
-       }
-    }
+      List<Message> userMessages = messageStore.getMessagesFromUser(user);
+      for(Message message : userMessages){
+        currentCount = currentCount + message.getContent().length();
+      }
+      if(currentCount > maxCount){
+        maxCount = currentCount;
+        wordiestUser = user.getName();
+        }
+      }
     return wordiestUser;
   }
 
@@ -134,7 +122,7 @@ public class AdminServlet extends HttpServlet {
     String username = (String) request.getSession().getAttribute("user");
 
     List<User> users = userStore.getAllUsers();
-    String newestUser = users.get(users.size()-1).getName();
+    String newestUser = userStore.getNewestUser();
 
     request.setAttribute("mostActiveUser", getMostActiveUser());
     request.setAttribute("wordiestUser", getWordiestUser());
