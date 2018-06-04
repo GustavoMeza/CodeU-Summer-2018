@@ -71,7 +71,7 @@ public class AdminServlet extends HttpServlet {
    * most messages in all conversations.
    * @return String with the username of the most active user
    */
-  private String getMostActiveUser() {
+  public String getMostActiveUser() {
     List<User> users = userStore.getAllUsers();
     int currentCount = 0;
     int maxCount = 0;
@@ -92,7 +92,7 @@ public class AdminServlet extends HttpServlet {
    * most characters in their messages-the wordiest user
    * @return String with the username of the wordiest user
    */
-  private String getWordiestUser() {
+  public String getWordiestUser() {
     List<User> users = userStore.getAllUsers();
     int currentCount = 0;
     int maxCount = 0;
@@ -121,7 +121,6 @@ public class AdminServlet extends HttpServlet {
 
     String username = (String) request.getSession().getAttribute("user");
 
-    List<User> users = userStore.getAllUsers();
     String newestUser = userStore.getNewestUser();
 
     request.setAttribute("mostActiveUser", getMostActiveUser());
