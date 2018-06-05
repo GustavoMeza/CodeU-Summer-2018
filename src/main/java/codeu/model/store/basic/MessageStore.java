@@ -15,6 +15,8 @@
 package codeu.model.store.basic;
 
 import codeu.model.data.Message;
+import codeu.model.data.User;
+import codeu.model.store.basic.UserStore;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,8 +83,22 @@ public class MessageStore {
         messagesInConversation.add(message);
       }
     }
-
     return messagesInConversation;
+  }
+
+  /** Access the current users set of Messages.
+   * @return the users messages in an ArrayList.
+   */
+  public ArrayList<Message> getMessagesFromUser(User user){
+    ArrayList<Message> userMessages = new ArrayList<Message> ();
+    for(Message message : messages){
+      String author = UserStore.getInstance()
+        .getUser(message.getAuthorId()).getName();
+      if(author.equals(user.getName())){
+           userMessages.add(message);
+         }
+       }
+    return userMessages;
   }
 
   /** Sets the List of Messages stored by this MessageStore. */
@@ -93,6 +109,11 @@ public class MessageStore {
   /** Returns all the messages, use with caution. */
   public List<Message> getAllMessages() {
       return messages;
+    }
+
+  /** Returns the total number of messages stored*/
+  public int numberOfMessages(){
+      return messages.size();
     }
 
   /** Finds and returns the Message with the given Id */

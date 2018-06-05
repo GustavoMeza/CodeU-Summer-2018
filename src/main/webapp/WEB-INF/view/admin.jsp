@@ -20,9 +20,14 @@
 
       <% if(request.getAttribute("error") != null){ %>
           <h2 style="color:red"><%= request.getAttribute("error") %></h2>
+      <% } else{ %>
+          <p>Number of Users: <%= request.getAttribute("numberOfUsers") %></p>
+          <p>Number of Conversations: <%= request.getAttribute("numberOfConversations") %></p>
+          <p>Number of Messages: <%= request.getAttribute("numberOfMessages") %></p>
+          <p>Most Active User: <%= request.getAttribute("mostActiveUser") %></p>
+          <p>Newest User: <%= request.getAttribute("newestUser") %></p>
+          <p>Wordiest User: <%= request.getAttribute("wordiestUser") %></p>
       <% } %>
-
-
     </div>
   </div>
 </body>

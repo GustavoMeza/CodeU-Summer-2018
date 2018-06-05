@@ -19,6 +19,7 @@ import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.time.Instant;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -57,6 +58,7 @@ public class UserStore {
 
   /** The in-memory list of Users. */
   private List<User> users;
+  private String newestUser = null;
 
   /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
   private UserStore(PersistentStorageAgent persistentStorageAgent) {
@@ -99,8 +101,29 @@ public class UserStore {
    */
   public void addUser(User user) {
     users.add(user);
+    newestUser = user.getName();
     persistentStorageAgent.writeThrough(user);
   }
+
+  /**
+   * Returns the username of the newest user
+   */
+   public String getNewestUser(){
+     if(newestUser == null){
+       Instant latestCreation = users.get(0).getCreationTime();
+       Instant currentCreation;
+       newestUser = users.get(0).getName();
+       for(int i = 1; i < users.size(); i++){
+         currentCreation = users.get(i).getCreationTime();
+         int result = currentCreation.compareTo(latestCreation);
+         if(result > 0){
+           latestCreation = currentCreation;
+           newestUser = users.get(i).getName();
+         }
+       }
+     }
+     return newestUser;
+   }
 
   /**
    * Update an existing User.
@@ -121,7 +144,7 @@ public class UserStore {
 
   /** Return true if the given username is known as an admin user to the application. */
   public boolean isUserAdmin(String username){
-    if(username.equals("adillinger")){
+    if(username.equals("admin")){
       return true;
     }
     return false;
@@ -139,5 +162,8 @@ public class UserStore {
   public List<User> getAllUsers() {
     return users;
   }
-}
 
+  public int numberOfUsers(){
+    return users.size();
+  }
+}
