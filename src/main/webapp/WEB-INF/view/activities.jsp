@@ -22,11 +22,6 @@ List<Activity> activities = (List<Activity>) request.getAttribute("activities");
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="moment.js"></script>
-  <script>
-  System.import('moment.js');
-      moment().fromNow();
-    </script>
   <title>Activity</title>
   <link rel="stylesheet" href="/css/main.css" type="text/css">
 
