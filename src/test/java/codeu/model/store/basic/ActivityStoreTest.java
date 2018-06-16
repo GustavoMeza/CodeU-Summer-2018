@@ -30,6 +30,7 @@ public class ActivityStoreTest {
                     UUID.randomUUID(),
                     UUID.randomUUID(),
                     UUID.randomUUID(),
+                    UUID.randomUUID(),
                     "message one",
                     Instant.ofEpochMilli(3000));
     private final User USER_ONE =

@@ -29,6 +29,29 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
   <link rel="stylesheet" href="/css/main.css" type="text/css">
 
   <style>
+    .parent {
+      font-size: x-small;
+      margin-bottom: -6px;
+    }
+
+    button.transparent {
+      border: 0;
+      padding: 0;
+      margin-left: 8px;
+      background: none;
+      cursor: pointer;
+    }
+
+    li {
+      margin: 4px;
+    }
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
+
     #chat {
       background-color: white;
       height: 500px;
@@ -38,15 +61,54 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
   <script>
     // scroll the chat div to the bottom
+    var idReply = null;
+
     function scrollChat() {
       var chatDiv = document.getElementById('chat');
       chatDiv.scrollTop = chatDiv.scrollHeight;
-    };
+    }
+
+    function reply(id, html) {
+      var parent_input = document.getElementById('parent');
+      if(parent_input != null) {
+        parent_input.setAttribute("value", id);
+      }
+
+      var message_input = document.getElementById('message');
+      if(message_input != null) {
+        message_input.focus();
+      }
+
+      var container = document.getElementById('reply-to');
+      if(html != null) {
+        html += " <button onclick='reply(\"\", null)' class='transparent'>X</button>";
+      }
+      container.innerHTML = html;
+    }
   </script>
 </head>
 <body onload="scrollChat()">
 
+  <%@ include file="../component/activity-helper.jsp" %>
+
   <%@ include file="../component/navbar.jsp" %>
+
+  <%!
+    public String formatChatMessage(Message message) {
+      return String.format("%s: %s",
+              formatUserName(message.getAuthorId()),
+              message.getContent());
+    }
+
+    public String formatHtml(String string) {
+      StringBuilder stringBuilder = new StringBuilder();
+      for(char c : string.toCharArray()) {
+        if(c == '\"') stringBuilder.append("\\");
+        stringBuilder.append(c);
+      }
+      return stringBuilder.toString();
+    }
+  %>
 
   <div id="container">
 
@@ -59,11 +121,21 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
       <ul>
     <%
       for (Message message : messages) {
-        String author = UserStore.getInstance()
-          .getUser(message.getAuthorId()).getName();
-    %>
-      <li><strong><%= author %>:</strong> <%= message.getContent() %></li>
-    <%
+        out.print("<li>");
+        if(message.getParentId() != null) {
+          out.print("<div class=\"parent\">");
+          Message parent = MessageStore.getInstance().getMessage(message.getParentId());
+          out.print(formatChatMessage(parent));
+          out.print("</div>");
+          out.print("&#8618;");
+        }
+        out.print(formatChatMessage(message));
+        String replyButton =String.format(
+            "<button onclick='reply(\"%s\", \"%s\")' class='transparent'>&#8618;</button>",
+            message.getId().toString(),
+            formatHtml(formatChatMessage(message)));
+        out.print(replyButton);
+        out.print("</li>");
       }
     %>
       </ul>
@@ -71,9 +143,11 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
     <hr/>
 
+      <div class="parent" id="reply-to"></div>
     <% if (request.getSession().getAttribute("user") != null) { %>
     <form action="/chat/<%= conversation.getTitle() %>" method="POST">
-        <input type="text" name="message">
+        <input type="hidden" name="parent" id="parent">
+        <input type="text" name="message" id="message">
         <br/>
         <button type="submit">Send</button>
     </form>

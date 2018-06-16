@@ -17,12 +17,15 @@ package codeu.model.data;
 import java.time.Instant;
 import java.util.UUID;
 
-/** Class representing a message. Messages are sent by a User in a Conversation. */
+/**
+ * Class representing a message. Messages are sent by a User in a Conversation.
+ */
 public class Message {
 
   private final UUID id;
   private final UUID conversation;
   private final UUID author;
+  private final UUID parent;
   private final String content;
   private final Instant creation;
 
@@ -35,36 +38,73 @@ public class Message {
    * @param content the text content of this Message
    * @param creation the creation time of this Message
    */
-  public Message(UUID id, UUID conversation, UUID author, String content, Instant creation) {
+  public Message(UUID id, UUID conversation, UUID author, UUID parent, String content,
+      Instant creation) {
     this.id = id;
     this.conversation = conversation;
     this.author = author;
+    this.parent = parent;
     this.content = content;
     this.creation = creation;
   }
 
-  /** Returns the ID of this Message. */
+  /**
+   * Returns the ID of this Message.
+   */
   public UUID getId() {
     return id;
   }
 
-  /** Returns the ID of the Conversation this Message belongs to. */
+  /**
+   * Returns the ID of the Conversation this Message belongs to.
+   */
   public UUID getConversationId() {
     return conversation;
   }
 
-  /** Returns the ID of the User who sent this Message. */
+  /**
+   * Returns the ID of the User who sent this Message.
+   */
   public UUID getAuthorId() {
     return author;
   }
 
-  /** Returns the text content of this Message. */
+  /**
+   * Returns the ID of the Message which this is a reply to, null if no such Message exists
+   **/
+  public UUID getParentId() {
+    return parent;
+  }
+
+  /**
+   * Returns the text content of this Message.
+   */
   public String getContent() {
     return content;
   }
 
-  /** Returns the creation time of this Message. */
+  /**
+   * Returns the creation time of this Message.
+   */
   public Instant getCreationTime() {
     return creation;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+    if (obj == null || obj.getClass() != this.getClass()) {
+      return false;
+    }
+    Message other = (Message)obj;
+    return other.getId().equals(this.getId()) &&
+        other.getConversationId().equals(this.getConversationId()) &&
+        other.getAuthorId().equals(this.getAuthorId()) &&
+        (other.getParentId() == null && this.getParentId() == null ||
+          other.getParentId().equals(this.getParentId())) &&
+        other.getContent().equals(this.getContent()) &&
+        other.getCreationTime().equals(this.getCreationTime());
   }
 }
