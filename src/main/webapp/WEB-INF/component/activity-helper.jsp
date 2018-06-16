@@ -1,6 +1,11 @@
 <%@ page import="java.util.UUID" %>
+<%@ page import="java.util.Date" %>
+
+<%@ page import="org.ocpsoft.prettytime.PrettyTime" %>
 
 <%@ page import="java.time.Instant" %>
+<%@ page import="java.time.ZoneId" %>
+<%@ page import="java.time.ZonedDateTime" %>
 <%@ page import="java.time.ZoneOffset" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
@@ -25,9 +30,9 @@
         }
 
         StringBuilder sBuilder = new StringBuilder();
-        sBuilder.append(formatCreationTime(activity.getCreatedAt()));
         sBuilder.append(formatUserName(userId));
         sBuilder.append(" joined!");
+        sBuilder.append(" " + formatCreationTime(activity.getCreatedAt()));
         return sBuilder.toString();
     }
 
@@ -45,10 +50,10 @@
         }
 
         StringBuilder sBuilder = new StringBuilder();
-        sBuilder.append(formatCreationTime(activity.getCreatedAt()));
         sBuilder.append(formatUserName(conversation.getOwnerId()));
         sBuilder.append(" created a new conversation: ");
         sBuilder.append(formatConversation(conversationId));
+        sBuilder.append(" " + formatCreationTime(activity.getCreatedAt()));
         return sBuilder.toString();
     }
 
@@ -66,12 +71,12 @@
         }
 
         StringBuilder sBuilder = new StringBuilder();
-        sBuilder.append(formatCreationTime(activity.getCreatedAt()));
         sBuilder.append(formatUserName(message.getAuthorId()));
         sBuilder.append(" sent a message in ");
         sBuilder.append(formatConversation(message.getConversationId()));
         sBuilder.append(": ");
         sBuilder.append(formatMessage(messageId));
+        sBuilder.append(" " + formatCreationTime(activity.getCreatedAt()));
         return sBuilder.toString();
     }
 
@@ -84,10 +89,20 @@
      * @return String with the creation time layout section
      */
     public String formatCreationTime(Instant time) {
+/*
+
         // Todo: Change this to show in local time.
-        LocalDateTime datetime = LocalDateTime.ofInstant(time, ZoneOffset.UTC);
-        String timeStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss").format(datetime);
-        return String.format("<strong>%s GMT: </strong>", timeStamp.toString());
+        ZoneId zoneId = ZoneId.of("America/Los_Angeles");
+        //LocalDateTime datetime = LocalDateTime.ofInstant(time, ZoneOffset.UTC);
+        ZonedDateTime zdt = time.atZone( zoneId ) ;
+        String timeStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss").format(zdt);
+        return String.format("<strong>%s PST: </strong>", timeStamp.toString());
+*/
+        Date dateCreated = Date.from(time);
+        PrettyTime relativeTime = new PrettyTime();
+        return relativeTime.format(dateCreated);
+
+
     }
 
     /**

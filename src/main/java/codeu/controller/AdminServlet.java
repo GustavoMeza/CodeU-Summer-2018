@@ -123,6 +123,7 @@ public class AdminServlet extends HttpServlet {
 
     String newestUser = userStore.getNewestUser();
 
+    request.setAttribute("dailyUsers", userStore.numberOfDailyUsers());
     request.setAttribute("mostActiveUser", getMostActiveUser());
     request.setAttribute("wordiestUser", getWordiestUser());
     request.setAttribute("newestUser", newestUser);
@@ -143,16 +144,4 @@ public class AdminServlet extends HttpServlet {
     }
 
   }
-
-  /**
-   * This function fires when a user submits the form on the chat page. It gets the logged-in
-   * username from the session, the conversation title from the URL, and the chat message from the
-   * submitted form data. It creates a new Message from that data, adds it to the model, and then
-   * redirects back to the chat page.
-   */
-  /*@Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-        //This function will handle adding in new data to the chat app, but isn't needed for the prototype
-  }*/
 }
