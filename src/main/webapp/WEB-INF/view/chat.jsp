@@ -57,32 +57,39 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
       height: 500px;
       overflow-y: scroll
     }
+
+    #message {
+      margin-top: 6px;
+    }
   </style>
 
   <script>
     // scroll the chat div to the bottom
-    var idReply = null;
-
     function scrollChat() {
       var chatDiv = document.getElementById('chat');
       chatDiv.scrollTop = chatDiv.scrollHeight;
     }
 
+    // triggered on reply button click
     function reply(id, html) {
+      // set the parent parameter for post request
       var parent_input = document.getElementById('parent');
       if(parent_input != null) {
         parent_input.setAttribute("value", id);
       }
 
+      // set focus to textbox, makes easier for the user to reply.
       var message_input = document.getElementById('message');
       if(message_input != null) {
         message_input.focus();
       }
 
+      // button to disable the reply.
       var container = document.getElementById('reply-to');
       if(html != null) {
-        html += " <button onclick='reply(\"\", null)' class='transparent'>X</button>";
+        html += " <button onclick='reply(\"\", null)' class='transparent'>x</button>";
       }
+
       container.innerHTML = html;
     }
   </script>
@@ -94,20 +101,56 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
   <%@ include file="../component/navbar.jsp" %>
 
   <%!
-    public String formatChatMessage(Message message) {
-      return String.format("%s: %s",
-              formatUserName(message.getAuthorId()),
-              message.getContent());
-    }
+      /**
+       * Method that creates a layout for a message in the Chat View, including response-to part.
+       * @param message The message to be formatted.
+       * @return String with the message layout in Chat View.
+       */
+      public String formatMessageInChat(Message message) {
+          StringBuilder formattedChat = new StringBuilder();
 
-    public String formatHtml(String string) {
-      StringBuilder stringBuilder = new StringBuilder();
-      for(char c : string.toCharArray()) {
-        if(c == '\"') stringBuilder.append("\\");
-        stringBuilder.append(c);
+          // Parent part of layout
+          if(message.getParentId() != null) {
+              Message parent = MessageStore.getInstance().getMessage(message.getParentId());
+              String formattedParent = String.format("<div class=\"parent\">%s</div>&#8618;",
+                      formatMessagePartInChat(parent));
+              formattedChat.append(formattedParent);
+          }
+
+          // Message part of layout
+          formattedChat.append(formatMessagePartInChat(message));
+
+          // Reply label to be shown as information to send messages
+          String replyLabel = formatMessagePartInChat(message);
+
+          // Label is going to be passed as a string argument, so it should be processed
+          // for instance <a href="/">link</a> should be <a href=\"/\">link</a>
+          StringBuilder replyLabelArgument = new StringBuilder();
+          for(char c : replyLabel.toCharArray()) {
+              if(c == '\"') replyLabelArgument.append("\\");
+              replyLabelArgument.append(c);
+          }
+
+          // Button part of layout
+          String replyButton = String.format(
+                  "<button onclick='reply(\"%s\", \"%s\")' class='transparent'>&#8618;</button>",
+                  message.getId().toString(),
+                  replyLabelArgument.toString());
+          formattedChat.append(replyButton);
+
+          return formattedChat.toString();
       }
-      return stringBuilder.toString();
-    }
+
+      /**
+       * Method that creates the layout part only for a message in the Chat View.
+       * @param message The message to be formatted.
+       * @return String with the message layout in Chat View.
+       */
+      public String formatMessagePartInChat(Message message) {
+          return String.format("%s: %s",
+                  formatUserName(message.getAuthorId()),
+                  message.getContent());
+      }
   %>
 
   <div id="container">
@@ -122,19 +165,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     <%
       for (Message message : messages) {
         out.print("<li>");
-        if(message.getParentId() != null) {
-          out.print("<div class=\"parent\">");
-          Message parent = MessageStore.getInstance().getMessage(message.getParentId());
-          out.print(formatChatMessage(parent));
-          out.print("</div>");
-          out.print("&#8618;");
-        }
-        out.print(formatChatMessage(message));
-        String replyButton =String.format(
-            "<button onclick='reply(\"%s\", \"%s\")' class='transparent'>&#8618;</button>",
-            message.getId().toString(),
-            formatHtml(formatChatMessage(message)));
-        out.print(replyButton);
+        out.print(formatMessageInChat(message));
         out.print("</li>");
       }
     %>
