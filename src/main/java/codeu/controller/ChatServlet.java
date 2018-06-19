@@ -139,6 +139,7 @@ public class ChatServlet extends HttpServlet {
     }
 
     String messageContent = request.getParameter("message");
+    String parentId = request.getParameter("parent");
 
     // this removes any HTML from the message content
     String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
@@ -148,6 +149,7 @@ public class ChatServlet extends HttpServlet {
             UUID.randomUUID(),
             conversation.getId(),
             user.getId(),
+            parentId.isEmpty() ? null : UUID.fromString(parentId),
             cleanedMessageContent,
             Instant.now());
 

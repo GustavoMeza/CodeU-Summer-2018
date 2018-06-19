@@ -17,7 +17,6 @@ package codeu.model.store.persistence;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
-import codeu.model.store.persistence.PersistentDataStoreException;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -134,9 +133,11 @@ public class PersistentDataStore {
         UUID uuid = UUID.fromString((String) entity.getProperty("uuid"));
         UUID conversationUuid = UUID.fromString((String) entity.getProperty("conv_uuid"));
         UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
+        String parentIdString = (String) entity.getProperty("parent");
+        UUID parentId = parentIdString == null ? null : UUID.fromString(parentIdString);
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
         String content = (String) entity.getProperty("content");
-        Message message = new Message(uuid, conversationUuid, authorUuid, content, creationTime);
+        Message message = new Message(uuid, conversationUuid, authorUuid, parentId, content, creationTime);
         messages.add(message);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -168,6 +169,8 @@ public class PersistentDataStore {
     messageEntity.setProperty("author_uuid", message.getAuthorId().toString());
     messageEntity.setProperty("content", message.getContent());
     messageEntity.setProperty("creation_time", message.getCreationTime().toString());
+    UUID parentId =  message.getParentId();
+    messageEntity.setProperty("parent", parentId == null ? null : parentId.toString());
     datastore.put(messageEntity);
   }
 

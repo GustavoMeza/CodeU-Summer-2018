@@ -23,6 +23,7 @@ public class MessageStoreTest {
           UUID.randomUUID(),
           CONVERSATION_ID_ONE,
           UUID.randomUUID(),
+          UUID.randomUUID(),
           "message one",
           Instant.ofEpochMilli(1000));
   private final Message MESSAGE_TWO =
@@ -30,10 +31,12 @@ public class MessageStoreTest {
           UUID.randomUUID(),
           CONVERSATION_ID_ONE,
           UUID.randomUUID(),
+          UUID.randomUUID(),
           "message two",
           Instant.ofEpochMilli(2000));
   private final Message MESSAGE_THREE =
       new Message(
+          UUID.randomUUID(),
           UUID.randomUUID(),
           UUID.randomUUID(),
           UUID.randomUUID(),
@@ -57,8 +60,8 @@ public class MessageStoreTest {
     List<Message> resultMessages = messageStore.getMessagesInConversation(CONVERSATION_ID_ONE);
 
     Assert.assertEquals(2, resultMessages.size());
-    assertEquals(MESSAGE_ONE, resultMessages.get(0));
-    assertEquals(MESSAGE_TWO, resultMessages.get(1));
+    Assert.assertEquals(MESSAGE_ONE, resultMessages.get(0));
+    Assert.assertEquals(MESSAGE_TWO, resultMessages.get(1));
   }
 
   @Test
@@ -69,13 +72,14 @@ public class MessageStoreTest {
             UUID.randomUUID(),
             inputConversationId,
             UUID.randomUUID(),
+            UUID.randomUUID(),
             "test message",
             Instant.now());
 
     messageStore.addMessage(inputMessage);
     Message resultMessage = messageStore.getMessagesInConversation(inputConversationId).get(0);
 
-    assertEquals(inputMessage, resultMessage);
+    Assert.assertEquals(inputMessage, resultMessage);
     Mockito.verify(mockPersistentStorageAgent).writeThrough(inputMessage);
   }
 
@@ -83,7 +87,7 @@ public class MessageStoreTest {
   public void testGetMessage_ById_found() {
     Message message = messageStore.getMessage(MESSAGE_ONE.getId());
 
-    assertEquals(message, MESSAGE_ONE);
+    Assert.assertEquals(message, MESSAGE_ONE);
   }
 
   @Test
@@ -91,13 +95,5 @@ public class MessageStoreTest {
     Message message = messageStore.getMessage(UUID.randomUUID());
 
     Assert.assertNull(message);
-  }
-
-  private void assertEquals(Message expectedMessage, Message actualMessage) {
-    Assert.assertEquals(expectedMessage.getId(), actualMessage.getId());
-    Assert.assertEquals(expectedMessage.getConversationId(), actualMessage.getConversationId());
-    Assert.assertEquals(expectedMessage.getAuthorId(), actualMessage.getAuthorId());
-    Assert.assertEquals(expectedMessage.getContent(), actualMessage.getContent());
-    Assert.assertEquals(expectedMessage.getCreationTime(), actualMessage.getCreationTime());
   }
 }
