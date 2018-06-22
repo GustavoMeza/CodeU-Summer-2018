@@ -22,7 +22,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
 /** Servlet class responsible for the chat page. */
-public class AdminServlet extends HttpServlet {
+public class AdminServlet extends ChatHttpServlet {
 
   /** Store class that gives access to Users. */
   private UserStore userStore;
@@ -119,8 +119,9 @@ public class AdminServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
 
-    String username = (String) request.getSession().getAttribute("user");
+    super.doGet(request, response);
 
+    String username = (String) request.getSession().getAttribute("user");
     String newestUser = userStore.getNewestUser();
 
     request.setAttribute("dailyUsers", userStore.numberOfDailyUsers());

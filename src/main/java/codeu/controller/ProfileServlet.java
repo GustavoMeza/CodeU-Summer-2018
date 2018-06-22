@@ -27,7 +27,7 @@ import org.jsoup.safety.Whitelist;
 import org.mindrot.jbcrypt.BCrypt;
 
 /** Servlet class responsible for the profile page. */
-public class ProfileServlet extends HttpServlet {
+public class ProfileServlet extends ChatHttpServlet {
 
   /** Store class that gives access to Users. */
   private UserStore userStore;
@@ -57,6 +57,7 @@ public class ProfileServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+    super.doGet(request, response);
     String requestUrl = request.getRequestURI();
     String username = requestUrl.substring("/users/".length());
 

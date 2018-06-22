@@ -14,7 +14,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import codeu.model.data.User;
 import codeu.model.store.basic.UserStore;
 
-public class RegisterServlet extends HttpServlet {
+public class RegisterServlet extends ChatHttpServlet {
 
   /** Store class that gives access to Users. */
   private UserStore userStore;
@@ -40,6 +40,7 @@ public class RegisterServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+    super.doGet(request, response);
     request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
   }
 

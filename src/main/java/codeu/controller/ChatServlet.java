@@ -32,7 +32,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
 /** Servlet class responsible for the chat page. */
-public class ChatServlet extends HttpServlet {
+public class ChatServlet extends ChatHttpServlet {
 
   /** Store class that gives access to Conversations. */
   private ConversationStore conversationStore;
@@ -84,6 +84,9 @@ public class ChatServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+
+    super.doGet(request, response);
+
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());
 

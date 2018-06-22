@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by GustavoMG on 17/05/2018.
  */
-public class ActivityServlet extends HttpServlet{
+public class ActivityServlet extends ChatHttpServlet{
 
     /** Amount of activities requested to the store. */
     public final static int maxActivitiesLoaded = 25;
@@ -44,6 +44,7 @@ public class ActivityServlet extends HttpServlet{
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
+        super.doGet(request, response);
         List<Activity> activities = activityStore.getActivities(0, maxActivitiesLoaded);
         // Can be null if activities are not loaded correctly, handled on view.
         request.setAttribute("activities", activities);
