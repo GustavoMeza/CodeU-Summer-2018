@@ -32,7 +32,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
 /** Servlet class responsible for the chat page. */
-public class ChatServlet extends ChatHttpServlet {
+public class ChatServlet extends HttpServlet {
 
   /** Store class that gives access to Conversations. */
   private ConversationStore conversationStore;
@@ -84,11 +84,14 @@ public class ChatServlet extends ChatHttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-
-    super.doGet(request, response);
-
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());
+
+    String username = (String) request.getSession().getAttribute("user");
+    if(username != null){
+      User user = userStore.getUser(username);
+      user.setLastLogin(Instant.now());
+    }
 
     Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
     if (conversation == null) {
@@ -130,6 +133,13 @@ public class ChatServlet extends ChatHttpServlet {
       response.sendRedirect("/login");
       return;
     }
+
+// SETTING THE LAST ACTIVE ATTRIBUTE
+    //String username = request.getParameter("username");
+    //if(username != null){
+    //  User currentUser = userStore.getUser(username);
+      user.setLastLogin(Instant.now());
+    //}
 
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());

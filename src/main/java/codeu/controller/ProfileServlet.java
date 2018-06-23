@@ -16,6 +16,7 @@ package codeu.controller;
 
 import codeu.model.data.User;
 import codeu.model.store.basic.UserStore;
+import java.time.Instant;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,7 +28,7 @@ import org.jsoup.safety.Whitelist;
 import org.mindrot.jbcrypt.BCrypt;
 
 /** Servlet class responsible for the profile page. */
-public class ProfileServlet extends ChatHttpServlet {
+public class ProfileServlet extends HttpServlet {
 
   /** Store class that gives access to Users. */
   private UserStore userStore;
@@ -57,11 +58,12 @@ public class ProfileServlet extends ChatHttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-    super.doGet(request, response);
     String requestUrl = request.getRequestURI();
     String username = requestUrl.substring("/users/".length());
 
     User user = userStore.getUser(username);
+    //SETTING LAST LOGIN ATTRIBUTE
+    user.setLastLogin(Instant.now());
     request.setAttribute("username", username);
     request.setAttribute("user", user);
     request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
@@ -78,6 +80,10 @@ public class ProfileServlet extends ChatHttpServlet {
     //}
 
     User user = userStore.getUser(username);
+
+    //SETTING LAST LOGIN ATTRIBUTE
+    user.setLastLogin(Instant.now());
+
     // if (user == null) {
     //   // user was not found, don't let them add a message
     //   response.sendRedirect("/login");

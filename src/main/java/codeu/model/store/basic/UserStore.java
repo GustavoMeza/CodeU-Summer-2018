@@ -60,7 +60,6 @@ public class UserStore {
   /** The in-memory list of Users. */
   private List<User> users;
   private String newestUser = null;
-  private int dailyUserCount = 0;
 
   /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
   private UserStore(PersistentStorageAgent persistentStorageAgent) {
@@ -170,6 +169,7 @@ public class UserStore {
   }
 
   public int numberOfDailyUsers(){
+    int dailyUserCount = 0;
     Date today = Date.from(Instant.now());
     int day = today.getDate();
     for(User user:users){
