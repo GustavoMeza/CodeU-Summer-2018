@@ -15,6 +15,8 @@
 --%>
 <%@ page import="java.util.List" %>
 <%@ page import="codeu.model.data.Activity" %>
+<%@ page import="codeu.view.ComponentProvider" %>
+<%@ page import="codeu.model.PusherProvider" %>
 <%
 List<Activity> activities = (List<Activity>) request.getAttribute("activities");
 %>
@@ -33,11 +35,24 @@ List<Activity> activities = (List<Activity>) request.getAttribute("activities");
     }
   </style>
 
+    <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+    <script>
+      var pusher = new Pusher('${PusherProvider.PUSHER_KEY}', {
+        cluster: 'us2',
+        encrypted: true
+      });
+
+      var channel = pusher.subscribe('${PusherProvider.ACTIVITY_CHANNEL}');
+
+      channel.bind('${PusherProvider.NEW_ACTIVITY}', function (data) {
+        var list = document.getElementById('activity-list');
+        list.innerHTML = '<li>' + data.view + '</li>' + list.innerHTML;
+      });
+    </script>
+
 </head>
 <body>
-  <%@ include file="../component/activity-helper.jsp" %>
-
-  <%@ include file="../component/navbar.jsp" %>
+    <%@ include file="../component/navbar.jsp" %>
 
   <div id="container">
 
@@ -45,8 +60,10 @@ List<Activity> activities = (List<Activity>) request.getAttribute("activities");
     <hr/>
 
     <div id="activity-board">
-      <ul>
-      <% if(activities == null) {
+      <ul id="activity-list">
+      <%
+        ComponentProvider componentProvider = ComponentProvider.getInstance();
+        if(activities == null) {
           out.print("Internal error: List not loaded correctly");
         } else {
           for (Activity activity : activities) {
@@ -54,13 +71,13 @@ List<Activity> activities = (List<Activity>) request.getAttribute("activities");
           // Easy to add new types of activities and change layouts.
           switch (activity.getType()) {
             case UserJoined:
-              out.print(userJoined(activity));
+              out.print(componentProvider.userJoined(activity));
               break;
             case ConversationCreated:
-              out.print(conversationCreated(activity));
+              out.print(componentProvider.conversationCreated(activity));
               break;
             case MessageSent:
-              out.print(messageSent(activity));
+              out.print(componentProvider.messageSent(activity));
               break;
           }
           out.print("</li>");
