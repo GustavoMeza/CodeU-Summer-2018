@@ -77,15 +77,16 @@ public class ProfileServlet extends HttpServlet {
 
     String requestUrl = request.getRequestURI();
     String username = requestUrl.substring("/users/".length());
-
     User user = userStore.getUser(username);
+
+    
     if (user == null){
       //redirects user to the login page if user is not logged in
       response.sendRedirect("/login");
       return;
     }
 
-    UUID userID = UserStore.getInstance().getUser(username).getId();
+    UUID userID = user.getId();
     if (userID == null){
       //redirects to login page if there is no user id
       response.sendRedirect("/login");

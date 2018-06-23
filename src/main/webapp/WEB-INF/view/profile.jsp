@@ -62,6 +62,7 @@ List<Message> messagesByUser = (List<Message>) request.getAttribute("messagesByU
 <body>
 
   <%@ include file="../component/navbar.jsp" %>
+  <%@ include file="../component/activity-helper.jsp" %>
 
   <div id="container">
     <h1><%= username %>'s Profile Page</h1>
@@ -71,26 +72,37 @@ List<Message> messagesByUser = (List<Message>) request.getAttribute("messagesByU
     <p>
       <%= user.getAboutMe()%>
     </p>
+    <% if(request.getSession().getAttribute("user") != null) { %>
+      <% if(request.getSession().getAttribute("user").equals(request.getAttribute("username"))) { %>
+        <h3>Edit your About Me (Only you can see this)</h3>
 
-    <h3>Edit your About Me (Only you can see this)</h3>
+        <form action="/users/<%= username %>" method="POST">
+          <textarea name="About Me" cols="40" rows="5"></textarea>
+          <br/>
+          <button type="submit">Submit</button>
+        </form>
+      <% } %>
+    <% } %>
 
-    <form action="/users/<%= username %>" method="POST">
-        <textarea name="About Me" cols="40" rows="5"></textarea>
-        <br/>
-        <button type="submit">Submit</button>
-    </form>
+
 
     <hr/>
     <h1><%= username %>'s Sent Messages</h1>
 
     <div id="chat">
       <ul>
-        <% for (Message message : messagesByUser) {
-          Instant time = message.getCreationTime();
-          String creation = DateTimeFormatter.RFC_1123_DATE_TIME.withZone(ZoneOffset.UTC).format(time);
-        %>
-          <li><strong><%= creation %>:</strong> <%= message.getContent() %></li>
+         <% for (Message message : messagesByUser) {
+          %>
+            <li>
+              <%= formatCreationTime(message.getCreationTime()) %>
+              <%= formatMessage(message.getId()) %>
+              in
+              <%= formatConversation(message.getConversationId()) %>
+            </li>
+
+
           <% } %>
+
         </ul>
     </div>
 
