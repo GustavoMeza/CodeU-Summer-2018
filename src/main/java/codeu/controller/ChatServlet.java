@@ -87,6 +87,12 @@ public class ChatServlet extends HttpServlet {
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());
 
+    String username = (String) request.getSession().getAttribute("user");
+    if(username != null){
+      User user = userStore.getUser(username);
+      user.setLastLogin(Instant.now());
+    }
+
     Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
     if (conversation == null) {
       // couldn't find conversation, redirect to conversation list
@@ -127,6 +133,13 @@ public class ChatServlet extends HttpServlet {
       response.sendRedirect("/login");
       return;
     }
+
+// SETTING THE LAST ACTIVE ATTRIBUTE
+    //String username = request.getParameter("username");
+    //if(username != null){
+    //  User currentUser = userStore.getUser(username);
+      user.setLastLogin(Instant.now());
+    //}
 
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());

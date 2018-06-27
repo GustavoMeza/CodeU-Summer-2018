@@ -16,6 +16,7 @@ package codeu.controller;
 
 import codeu.model.data.User;
 import codeu.model.store.basic.UserStore;
+import java.time.Instant;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -61,6 +62,8 @@ public class ProfileServlet extends HttpServlet {
     String username = requestUrl.substring("/users/".length());
 
     User user = userStore.getUser(username);
+    //SETTING LAST LOGIN ATTRIBUTE
+    user.setLastLogin(Instant.now());
     request.setAttribute("username", username);
     request.setAttribute("user", user);
     request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
@@ -77,6 +80,10 @@ public class ProfileServlet extends HttpServlet {
     //}
 
     User user = userStore.getUser(username);
+
+    //SETTING LAST LOGIN ATTRIBUTE
+    user.setLastLogin(Instant.now());
+
     // if (user == null) {
     //   // user was not found, don't let them add a message
     //   response.sendRedirect("/login");

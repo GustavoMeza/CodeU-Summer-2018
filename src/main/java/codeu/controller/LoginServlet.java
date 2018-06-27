@@ -16,6 +16,7 @@ package codeu.controller;
 
 import codeu.model.data.User;
 import codeu.model.store.basic.UserStore;
+import java.time.Instant;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -82,6 +83,9 @@ public class LoginServlet extends HttpServlet {
       request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);
       return;
     }
+
+//SETTING LAST LOGIN ATTRIBUTE
+    user.setLastLogin(Instant.now());
 
     request.getSession().setAttribute("user", username);
     response.sendRedirect("/activity");

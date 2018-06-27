@@ -19,6 +19,7 @@ import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.Date;
 import java.time.Instant;
 
 /**
@@ -165,5 +166,17 @@ public class UserStore {
 
   public int numberOfUsers(){
     return users.size();
+  }
+
+  public int numberOfDailyUsers(){
+    int dailyUserCount = 0;
+    Date today = Date.from(Instant.now());
+    int day = today.getDate();
+    for(User user:users){
+      if((Date.from(user.getLastLogin())).getDate() == day){
+        dailyUserCount++;
+      }
+    }
+    return dailyUserCount;
   }
 }

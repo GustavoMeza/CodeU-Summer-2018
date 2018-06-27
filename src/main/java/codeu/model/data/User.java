@@ -16,6 +16,7 @@ package codeu.model.data;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.Date;
 
 /** Class representing a registered user. */
 public class User {
@@ -24,6 +25,7 @@ public class User {
   private final String passwordHash;
   private final Instant creation;
   private String aboutMe;
+  private Instant lastLogin;
 
   /**
    * Constructs a new User.
@@ -38,6 +40,7 @@ public class User {
     this.name = name;
     this.passwordHash = passwordHash;
     this.creation = creation;
+    this.lastLogin = creation;
     this.aboutMe = " ";
   }
 
@@ -67,5 +70,15 @@ public class User {
   //Sets users about me content
   public void setAboutMe(String aboutMe){
     this.aboutMe = aboutMe;
+  }
+
+  /** Returns is the user was active yesterday or not. */
+  public Instant getLastLogin(){
+    return lastLogin;
+  }
+
+  /** Returns is the user was active yesterday or not. */
+  public void setLastLogin(Instant login){
+    this.lastLogin = login;
   }
 }

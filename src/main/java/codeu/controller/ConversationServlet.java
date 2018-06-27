@@ -70,6 +70,12 @@ public class ConversationServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+    //super.doGet(request, response);
+    String username = (String) request.getSession().getAttribute("user");
+    if(username != null){
+      User currentUser = userStore.getUser(username);
+      currentUser.setLastLogin(Instant.now());
+    }
     List<Conversation> conversations = conversationStore.getAllConversations();
     request.setAttribute("conversations", conversations);
     request.getRequestDispatcher("/WEB-INF/view/conversations.jsp").forward(request, response);
@@ -98,6 +104,8 @@ public class ConversationServlet extends HttpServlet {
       response.sendRedirect("/conversations");
       return;
     }
+//SETTING LAST LOGIN STAT
+      user.setLastLogin(Instant.now());
 
     String conversationTitle = request.getParameter("conversationTitle");
     if (!conversationTitle.matches("[\\w*]*")) {
