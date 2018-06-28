@@ -30,6 +30,7 @@ public class ActivityStoreTest {
                     UUID.randomUUID(),
                     UUID.randomUUID(),
                     UUID.randomUUID(),
+                    UUID.randomUUID(),
                     "message one",
                     Instant.ofEpochMilli(3000));
     private final User USER_ONE =
@@ -92,9 +93,9 @@ public class ActivityStoreTest {
     public void testGetActivities() {
         List<Activity> resultActivities = activityStore.getActivities(0, 5);
         Assert.assertEquals(3, resultActivities.size());
-        assertEquals(ACTIVITY_ONE, resultActivities.get(0));
-        assertEquals(ACTIVITY_TWO, resultActivities.get(1));
-        assertEquals(ACTIVITY_THREE, resultActivities.get(2));
+        Assert.assertEquals(ACTIVITY_ONE, resultActivities.get(0));
+        Assert.assertEquals(ACTIVITY_TWO, resultActivities.get(1));
+        Assert.assertEquals(ACTIVITY_THREE, resultActivities.get(2));
     }
 
     @Test
@@ -109,9 +110,4 @@ public class ActivityStoreTest {
         Assert.assertNull(resultActivities);
     }
 
-    private void assertEquals(Activity expectedActivity, Activity actualActivity) {
-        Assert.assertEquals(expectedActivity.getType(), actualActivity.getType());
-        Assert.assertEquals(expectedActivity.getObjectId(), actualActivity.getObjectId());
-        Assert.assertEquals(expectedActivity.getFiringTime(), actualActivity.getFiringTime());
-    }
 }

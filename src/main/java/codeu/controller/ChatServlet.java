@@ -87,6 +87,12 @@ public class ChatServlet extends HttpServlet {
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());
 
+    String username = (String) request.getSession().getAttribute("user");
+    if(username != null){
+      User user = userStore.getUser(username);
+      user.setLastLogin(Instant.now());
+    }
+
     Conversation conversation = conversationStore.getConversationWithTitle(conversationTitle);
     if (conversation == null) {
       // couldn't find conversation, redirect to conversation list
@@ -128,6 +134,13 @@ public class ChatServlet extends HttpServlet {
       return;
     }
 
+// SETTING THE LAST ACTIVE ATTRIBUTE
+    //String username = request.getParameter("username");
+    //if(username != null){
+    //  User currentUser = userStore.getUser(username);
+      user.setLastLogin(Instant.now());
+    //}
+
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());
 
@@ -139,6 +152,7 @@ public class ChatServlet extends HttpServlet {
     }
 
     String messageContent = request.getParameter("message");
+    String parentId = request.getParameter("parent");
 
     // this removes any HTML from the message content
     String cleanedMessageContent = Jsoup.clean(messageContent, Whitelist.none());
@@ -148,6 +162,7 @@ public class ChatServlet extends HttpServlet {
             UUID.randomUUID(),
             conversation.getId(),
             user.getId(),
+            parentId.isEmpty() ? null : UUID.fromString(parentId),
             cleanedMessageContent,
             Instant.now());
 

@@ -18,6 +18,7 @@ import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+import java.time.Instant;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -79,7 +80,8 @@ public class ProfileServlet extends HttpServlet {
     String username = requestUrl.substring("/users/".length());
     User user = userStore.getUser(username);
 
-    
+
+
     if (user == null){
       //redirects user to the login page if user is not logged in
       response.sendRedirect("/login");
@@ -96,6 +98,9 @@ public class ProfileServlet extends HttpServlet {
     List<Message> messagesByUser = messageStore.getMessagesByUser(userID);
 
     request.setAttribute("messagesByUser", messagesByUser);
+
+    //SETTING LAST LOGIN ATTRIBUTE
+    user.setLastLogin(Instant.now());
     request.setAttribute("username", username);
     request.setAttribute("user", user);
     request.getRequestDispatcher("/WEB-INF/view/profile.jsp").forward(request, response);
@@ -108,6 +113,16 @@ public class ProfileServlet extends HttpServlet {
     String username = (String) request.getSession().getAttribute("user");
 
     User user = userStore.getUser(username);
+
+    //SETTING LAST LOGIN ATTRIBUTE
+    user.setLastLogin(Instant.now());
+
+    // if (user == null) {
+    //   // user was not found, don't let them add a message
+    //   response.sendRedirect("/login");
+    //   return;
+    //}
+
 
     String aboutMeContent = request.getParameter("About Me");
 

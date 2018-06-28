@@ -66,7 +66,7 @@ public class ActivityServletTest {
     }
 
     @Test
-    public void testDoGet_nullActivityLit() throws IOException, ServletException {
+    public void testDoGet_nullActivityList() throws IOException, ServletException {
         List<Activity> fakeActivityList = null;
 
         Mockito.when(mockActivityStore.getActivities(0, ActivityServlet.maxActivitiesLoaded))
