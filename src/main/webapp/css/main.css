@@ -23,16 +23,26 @@ body {
   background-color: #eeeeee;
 }
 
+.navbar-brand {
+  padding: 0 15px;
+  height: 200px;
+  line-height: 80px;
+}
+
 nav {
   background-color: #283593;
+  line-height: 3;
 }
 
 nav a {
+  text-align: center;
+  background-color: #283593;
+  line-height: 3;
   color: white;
   display: inline-block;
   font-size: 24px;
-  margin: 15px;
   text-decoration: none;
+  font-family: sans-serif;
 }
 
 #navTitle {
@@ -50,9 +60,5 @@ h1 {
 }
 
 input {
-  font-size: 18px;
-}
-
-button {
   font-size: 18px;
 }

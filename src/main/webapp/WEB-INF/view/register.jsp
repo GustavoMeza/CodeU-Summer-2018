@@ -21,7 +21,9 @@
 </head>
 <body>
 
-  <%@ include file="../component/navbar.jsp" %>
+  <nav>
+      <a id="navTitle" href="/">CodeU Chat App</a>
+  </nav>
 
   <div id="container">
     <h1>Register</h1>

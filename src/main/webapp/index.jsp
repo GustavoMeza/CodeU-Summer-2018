@@ -17,26 +17,35 @@
 <html>
 <head>
   <title>CodeU Chat App</title>
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/loginpage.css">
 </head>
 <body>
 
-  <%@ include file="WEB-INF/component/navbar.jsp" %>
+  <nav>
+    <div class="nav-wrapper">
+        <b id="navTitle" href="/ center">CODEU CHAT APP</b>
+    </div>
+  </nav>
 
   <div id="container">
     <div
       style="width:75%; margin-left:auto; margin-right:auto; margin-top: 50px;">
 
-      <h1>CodeU Chat App</h1>
-      <h2>Welcome!</h2>
 
-      <ul>
-        <li><a href="/login">Login</a> to get started.</li>
-        <li>Go to the <a href="/conversations">conversations</a> page to
-            create or join a conversation.</li>
-        <li>View the <a href="/about.jsp">about</a> page to learn more about the
-            project.</li>
-      </ul>
+      <form action="/login" method="POST">
+        <label for="username">USERNAME: </label>
+        <br/>
+        <input type="text" name="username" id="username">
+        <br/>
+        <label for="password">PASSWORD: </label>
+        <br/>
+        <input type="password" name="password" id="password">
+        <br/><br/>
+        <button type="/login">LOGIN</button>
+        <br/><br/>
+      </form>
+
+      <p>Not a member? <br/> <a href="/register">Sign Up</a></p>
     </div>
   </div>
 </body>
