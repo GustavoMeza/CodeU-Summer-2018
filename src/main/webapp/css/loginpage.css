@@ -1,0 +1,59 @@
+
+
+body {
+  text-align:center;
+}
+
+nav {
+  text-align:center;
+  background: url(backgroundimage2.jpg) darkslategrey;
+  background-size:300px;
+}
+
+
+nav b {
+  text-align: center;
+  background: url(backgroundimage2.jpg) darkslategrey;
+  background-size:300px;
+  line-height: 8;
+  column-width: 100000px;
+  color: black;
+  display: inline-block;
+  font-size: 24px;
+  text-decoration: none;
+  font-family: monospace;
+  font-weight: bolder;
+}
+
+div {
+  margin-top: 0px;
+}
+
+form {
+  margin-top:50px;
+}
+
+input {
+  text-align:left;
+  border: none;
+  border-bottom: 2px solid fuchsia;
+  background-color: #eeeeee;
+  outline: none;
+}
+
+button {
+  text-align:center;
+  background-color: darkturquoise;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  font-size: 20px;
+  border-radius: 16px;
+  -webkit-text-stroke-width: thin;
+  transition-duration: 0.4s;
+}
+
+button:hover {
+    background-color: skyblue;
+    color: white;
+}

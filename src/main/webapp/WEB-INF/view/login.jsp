@@ -13,36 +13,44 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --%>
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
+  <title>CodeU Chat App</title>
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/loginpage.css">
 </head>
 <body>
 
-  <%@ include file="../component/navbar.jsp" %>
+  <nav>
+    <div class="nav-wrapper">
+        <b id="navTitle" href="/ center">CODEU CHAT APP</b>
+    </div>
+  </nav>
 
   <div id="container">
-    <h1>Login</h1>
+    <div>
 
-    <% if(request.getAttribute("error") != null){ %>
-        <h2 style="color:red"><%= request.getAttribute("error") %></h2>
-    <% } %>
+      <% if(request.getAttribute("error") != null){ %>
+          <h2><%= request.getAttribute("error") %></h2>
+      <% } %>
 
-    <form action="/login" method="POST">
-      <label for="username">Username: </label>
-      <br/>
-      <input type="text" name="username" id="username">
-      <br/>
-      <label for="password">Password: </label>
-      <br/>
-      <input type="password" name="password" id="password">
-      <br/><br/>
-      <button type="submit">Login</button>
-    </form>
+      <form action="/login" method="POST">
+        <label for="username">USERNAME: </label>
+        <br/>
+        <input type="text" name="username" id="username">
+        <br/>
+        <label for="password">PASSWORD: </label>
+        <br/>
+        <input type="password" name="password" id="password">
+        <br/><br/>
+        <button type="/login">LOGIN</button>
+        <br/><br/>
+      </form>
 
-    <p>New users can register <a href="/register">here</a>.</p>
+      <p>Not a member? <br/> <a href="/register">Sign Up</a></p>
+    </div>
   </div>
 </body>
 </html>
