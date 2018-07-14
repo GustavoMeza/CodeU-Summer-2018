@@ -77,7 +77,7 @@ public class AdminServlet extends HttpServlet {
     int maxCount = 0;
     String mostActiveUser =  null;
     for (User user : users) {
-      List<Message> userMessages = messageStore.getMessagesFromUser(user);
+      List<Message> userMessages = messageStore.getMessagesByUser(user.getId());
       currentCount = userMessages.size();
       if(currentCount > maxCount){
         maxCount = currentCount;
@@ -98,7 +98,7 @@ public class AdminServlet extends HttpServlet {
     int maxCount = 0;
     String wordiestUser =  null;
     for (User user : users) {
-      List<Message> userMessages = messageStore.getMessagesFromUser(user);
+      List<Message> userMessages = messageStore.getMessagesByUser(user.getId());
       for(Message message : userMessages){
         currentCount = currentCount + message.getContent().length();
       }

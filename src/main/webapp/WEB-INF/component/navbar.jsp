@@ -9,6 +9,10 @@
     <% } else { %>
       <a href="/login">Login</a>
     <% } %>
-    <a href="/activity">Activity</a>
+
+    <a href="/users/<%=request.getSession().getAttribute("user")%>">My Profile</a>
     <a href="/about.jsp">About</a>
+    <a href="/activity">Activity</a>
+    <a href="/logout.jsp">Logout</a>
+
 </nav>
