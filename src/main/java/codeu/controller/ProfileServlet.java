@@ -80,22 +80,13 @@ public class ProfileServlet extends HttpServlet {
     String username = requestUrl.substring("/users/".length());
     User user = userStore.getUser(username);
 
-
-
     if (user == null){
       //redirects user to the login page if user is not logged in
       response.sendRedirect("/login");
       return;
     }
 
-    UUID userID = user.getId();
-    if (userID == null){
-      //redirects to login page if there is no user id
-      response.sendRedirect("/login");
-      return;
-    }
-
-    List<Message> messagesByUser = messageStore.getMessagesByUser(userID);
+    List<Message> messagesByUser = messageStore.getMessagesByUser(user.getId());
 
     request.setAttribute("messagesByUser", messagesByUser);
 
@@ -114,24 +105,22 @@ public class ProfileServlet extends HttpServlet {
 
     User user = userStore.getUser(username);
 
+    if (user == null){
+      //redirects user to the login page if user is not logged in
+      response.sendRedirect("/login");
+      return;
+    }
+
     //SETTING LAST LOGIN ATTRIBUTE
     user.setLastLogin(Instant.now());
-
-    // if (user == null) {
-    //   // user was not found, don't let them add a message
-    //   response.sendRedirect("/login");
-    //   return;
-    //}
 
 
     String aboutMeContent = request.getParameter("About Me");
 
-    String messageContent = request.getParameter("messagesByUser");
-
     // this removes any HTML from the message content
     String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
-    user.setAboutMe(cleanedAboutMeContent);
-    userStore.updateUser(user);
+      user.setAboutMe(cleanedAboutMeContent);
+      userStore.updateUser(user);
 
 
     // redirect to a GET request
