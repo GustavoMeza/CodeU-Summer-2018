@@ -16,6 +16,8 @@ package codeu.model.data;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Class representing a message. Messages are sent by a User in a Conversation.
@@ -26,6 +28,7 @@ public class Message {
   private final UUID conversation;
   private final UUID author;
   private final UUID parent;
+  private List<Message> children;
   private final String content;
   private final Instant creation;
 
@@ -44,6 +47,7 @@ public class Message {
     this.conversation = conversation;
     this.author = author;
     this.parent = parent;
+    this.children = new ArrayList<Message>();
     this.content = content;
     this.creation = creation;
   }
@@ -74,6 +78,20 @@ public class Message {
    **/
   public UUID getParentId() {
     return parent;
+  }
+
+  /**
+   * Returns the ID of the reply to this message, null if no such message exists
+   **/
+  public List<Message> getChildren(){
+    return children;
+  }
+
+  /**
+   * Set the ID of the message that replies to this message
+   **/
+  public void addChild(Message message){
+    this.children.add(message);
   }
 
   /**

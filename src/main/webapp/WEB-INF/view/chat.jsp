@@ -17,6 +17,7 @@
 <%@ page import="codeu.model.data.Conversation" %>
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
+<%@ page import="codeu.model.store.basic.MessageStore" %>
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
 List<Message> messages = (List<Message>) request.getAttribute("messages");
@@ -27,41 +28,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 <head>
   <title><%= conversation.getTitle() %></title>
   <link rel="stylesheet" href="/css/main.css" type="text/css">
-
-  <style>
-    .parent {
-      font-size: x-small;
-      margin-bottom: -6px;
-    }
-
-    button.transparent {
-      border: 0;
-      padding: 0;
-      margin-left: 8px;
-      background: none;
-      cursor: pointer;
-    }
-
-    li {
-      margin: 4px;
-    }
-
-    ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    #chat {
-      background-color: white;
-      height: 500px;
-      overflow-y: scroll
-    }
-
-    #message {
-      margin-top: 6px;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/chat.css">
 
   <script>
     // scroll the chat div to the bottom
@@ -107,19 +74,19 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
        * @return String with the message layout in Chat View.
        */
       public String formatMessageInChat(Message message) {
-          StringBuilder formattedChat = new StringBuilder();
+        MessageStore messageStore = MessageStore.getInstance();
+        StringBuilder formattedChat = new StringBuilder();
 
-          // Parent part of layout
-          if(message.getParentId() != null) {
-              Message parent = MessageStore.getInstance().getMessage(message.getParentId());
-              String formattedParent = String.format("<div class=\"parent\">%s</div>&#8618;",
-                      formatMessagePartInChat(parent));
-              formattedChat.append(formattedParent);
+        if(message.getParentId() == null){
+          String formattedMessage = String.format("<div class=\"parent\">%s</div>&#8618;",
+                  formatMessagePartInChat(message));
+          formattedChat.append(formattedMessage);
+          if(message.getChildren() != null){
+            List<Message> childrenMessages = message.getChildren();
+            for(Message nextMessage : childrenMessages){
+              formatMessageInChat(nextMessage);
+            }
           }
-
-          // Message part of layout
-          formattedChat.append(formatMessagePartInChat(message));
-
           // Reply label to be shown as information to send messages
           String replyLabel = formatMessagePartInChat(message);
 
@@ -137,6 +104,11 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
                   message.getId().toString(),
                   replyLabelArgument.toString());
           formattedChat.append(replyButton);
+        }else{
+          //formatMessageInChat(messageStore.getMessage(message.getParentId()));
+            // Message part of layout
+          formattedChat.append(formatMessagePartInChat(message));
+        }
 
           return formattedChat.toString();
       }
@@ -164,9 +136,11 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
       <ul>
     <%
       for (Message message : messages) {
-        out.print("<li>");
-        out.print(formatMessageInChat(message));
-        out.print("</li>");
+        if(message.getParentId() == null){
+          out.print("<li>");
+          out.print(formatMessageInChat(message));
+          out.print("</li>");
+        }
       }
     %>
       </ul>
@@ -178,8 +152,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     <% if (request.getSession().getAttribute("user") != null) { %>
     <form action="/chat/<%= conversation.getTitle() %>" method="POST">
         <input type="hidden" name="parent" id="parent">
-        <input type="text" name="message" id="message">
-        <br/>
+        <input type="text" placeholder="new message" name="message" id="message">
         <button type="submit">Send</button>
     </form>
     <% } else { %>

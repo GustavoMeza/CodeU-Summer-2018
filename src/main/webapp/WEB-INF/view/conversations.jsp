@@ -38,9 +38,8 @@
           <div class="form-group">
             <label class="form-control-label">Title:</label>
           <input type="text" name="conversationTitle">
+          <button type="submit">Create</button>
         </div>
-
-        <button type="submit">Create</button>
       </form>
 
       <hr/>

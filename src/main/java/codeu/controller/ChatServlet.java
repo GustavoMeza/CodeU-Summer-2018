@@ -134,12 +134,7 @@ public class ChatServlet extends HttpServlet {
       return;
     }
 
-// SETTING THE LAST ACTIVE ATTRIBUTE
-    //String username = request.getParameter("username");
-    //if(username != null){
-    //  User currentUser = userStore.getUser(username);
-      user.setLastLogin(Instant.now());
-    //}
+    user.setLastLogin(Instant.now());
 
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());
@@ -165,6 +160,12 @@ public class ChatServlet extends HttpServlet {
             parentId.isEmpty() ? null : UUID.fromString(parentId),
             cleanedMessageContent,
             Instant.now());
+
+    if(message.getParentId() != null){
+      UUID parentMessageId = message.getParentId();
+      Message parentMessage = messageStore.getMessage(parentMessageId);
+      parentMessage.addChild(message);
+    }
 
     messageStore.addMessage(message);
 
