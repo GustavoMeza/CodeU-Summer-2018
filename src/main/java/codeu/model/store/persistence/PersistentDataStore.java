@@ -152,41 +152,6 @@ public class PersistentDataStore {
     return messages;
   }
 
-  public HashMap<UUID, ArrayList<Message>> loadMessagesMap() throws PersistentDataStoreException {
-
-    HashMap<UUID, ArrayList<Message>> messagesMap = new HashMap<UUID, ArrayList<Message>>();
-    ArrayList<Message> childrenMessages = new ArrayList<>();
-
-    // Retrieve all messages from the datastore.
-    Query query = new Query("messages-map");
-    PreparedQuery results = datastore.prepare(query);
-
-    for (Entity entity : results.asIterable()) {
-      try {
-        UUID parentId = UUID.fromString((String) entity.getProperty("parent-message"));
-        childrenMessages = entity.getProperty("children-messages");
-
-
-        /*UUID conversationUuid = UUID.fromString((String) entity.getProperty("conv_uuid"));
-        UUID authorUuid = UUID.fromString((String) entity.getProperty("author_uuid"));
-        String parentIdString = (String) entity.getProperty("parent");
-        UUID parentId = parentIdString == null ? null : UUID.fromString(parentIdString);
-        Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
-        String content = (String) entity.getProperty("content");
-        Message message = new Message(uuid, conversationUuid, authorUuid, parentId, content, creationTime);
-        messages.add(message);*/
-        messagesMap.put(parentId, childrenMessages);
-      } catch (Exception e) {
-        // In a production environment, errors should be very rare. Errors which may
-        // occur include network errors, Datastore service errors, authorization errors,
-        // database entity definition mismatches, or service mismatches.
-        throw new PersistentDataStoreException(e);
-      }
-    }
-
-    return messagesMap;
-  }
-
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
     Entity userEntity = new Entity("chat-users", user.getId().toString());
@@ -221,7 +186,7 @@ public class PersistentDataStore {
     datastore.put(conversationEntity);
   }
 
-  public void writeThrough(HashMap<UUID, ArrayList<Message>> messagesMap){
+  /*public void writeThrough(HashMap<UUID, ArrayList<Message>> messagesMap){
     Entity mapEntity = new Entity("messages-map", messagesMap.entrySet());
     //mapEntity.setProperty("parent-messages", messagesMap.keySet().toString());
     for(UUID key : messagesMap.keySet()){
@@ -230,5 +195,5 @@ public class PersistentDataStore {
     }
     //mapEntity.setProperty("children-messages", messagesMap..toString());
     datastore.put(mapEntity);
-  }
+  }*/
 }

@@ -32,10 +32,11 @@ public class ServerStartupListener implements ServletContextListener {
       ConversationStore.getInstance().setConversations(conversations);
 
       List<Message> messages = PersistentStorageAgent.getInstance().loadMessages();
+      //HashMap<UUID, ArrayList<Message>> messagesMap = PersistentStorageAgent.getInstance().loadMessagesMap();
       MessageStore.getInstance().setMessages(messages);
 
-      HashMap<UUID, ArrayList<Message>> messagesMap = PersistentStorageAgent.getInstance().loadMessagesMap();
-      MessageStore.getInstance().setMessagesMap(messagesMap);
+      //HashMap<UUID, ArrayList<Message>> messagesMap = PersistentStorageAgent.getInstance().loadMessagesMap();
+      //MessageStore.getInstance().setMessagesMap(messagesMap);
 
     } catch (PersistentDataStoreException e) {
       System.err.println("Server didn't start correctly. An error occurred during Datastore load!");

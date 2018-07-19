@@ -177,18 +177,9 @@ public class ChatServletTest {
         new Conversation(UUID.randomUUID(), UUID.randomUUID(), "test_conversation", Instant.now());
     Mockito.when(mockConversationStore.getConversationWithTitle("test_conversation"))
         .thenReturn(fakeConversation);
-    UUID parentId = UUID.randomUUID();
-    UUID childId = UUID.randomUUID();
 
-    Message fakeParentMessage =
-        new Message(parentId, fakeConversation.getId(), UUID.randomUUID(), null, "Test Parent Message",
-            Instant.now());
-    Message fakeChildMessage =
-        new Message(UUID.randomUUID(), fakeConversation.getId(), UUID.randomUUID(), parentId, "Test Child Message",
-            Instant.now());
-    fakeParentMessage.setChildId(childId);
     Mockito.when(mockRequest.getParameter("message")).thenReturn("Test message.");
-    Mockito.when(mockRequest.getParameter("parent")).thenReturn(parentId.toString());
+    Mockito.when(mockRequest.getParameter("parent")).thenReturn("");
 
     chatServlet.doPost(mockRequest, mockResponse);
 
@@ -218,12 +209,9 @@ public class ChatServletTest {
     Mockito.when(mockConversationStore.getConversationWithTitle("test_conversation"))
         .thenReturn(fakeConversation);
 
+    Mockito.when(mockRequest.getParameter("message")).thenReturn("Test message.");
     UUID mockParentId = UUID.randomUUID();
-    Message fakeMessage = new Message(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), mockParentId,
-     "message", Instant.now());
-    fakeMessage.setChildId(mockParentId);
-    Mockito.when(mockRequest.getParameter("message")).thenReturn(fakeMessage.getContent());
-    Mockito.when(mockRequest.getParameter("parent")).thenReturn(fakeMessage.getParentId().toString());
+    Mockito.when(mockRequest.getParameter("parent")).thenReturn(mockParentId.toString());
 
     chatServlet.doPost(mockRequest, mockResponse);
 

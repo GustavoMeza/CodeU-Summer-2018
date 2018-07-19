@@ -98,9 +98,9 @@ public class PersistentStorageAgent {
    * @throws PersistentDataStoreException if an error was detected during the load from the
    *     Datastore service
    */
-  public HashMap<UUID, ArrayList<Message>> loadMessagesMap() throws PersistentDataStoreException {
+  /*public HashMap<UUID, ArrayList<Message>> loadMessagesMap() throws PersistentDataStoreException {
     return persistentDataStore.loadMessagesMap();
-  }
+  }*/
 
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
@@ -118,9 +118,9 @@ public class PersistentStorageAgent {
   }
 
   /** Write a HashMap object to the Datastore service. */
-  public void writeThrough(HashMap<UUID, ArrayList<Message>> messagesMap) {
+  /*public void writeThrough(HashMap<UUID, ArrayList<Message>> messagesMap) {
     persistentDataStore.writeThrough(messagesMap);
-  }
+  }*/
 
 
   /** Retrieve the number of messages stored in the database. */

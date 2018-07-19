@@ -47,7 +47,6 @@ public class Message {
     this.conversation = conversation;
     this.author = author;
     this.parent = parent;
-    this.children = new ArrayList<Message>();
     this.content = content;
     this.creation = creation;
   }
@@ -78,20 +77,6 @@ public class Message {
    **/
   public UUID getParentId() {
     return parent;
-  }
-
-  /**
-   * Returns the ID of the reply to this message, null if no such message exists
-   **/
-  public List<Message> getChildren(){
-    return children;
-  }
-
-  /**
-   * Set the ID of the message that replies to this message
-   **/
-  public void addChild(Message message){
-    this.children.add(message);
   }
 
   /**
