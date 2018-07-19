@@ -136,6 +136,10 @@ public static HashMap<UUID, ArrayList<Message>> getChildrenMessages(){
     this.messages = messages;
   }
 
+  public void setMessagesMap(HashMap<UUID, ArrayList<Message>> messagesMap){
+    this.messagesMap = messagesMap;
+  }
+
   /** Returns all the messages, use with caution. */
   public List<Message> getAllMessages() {
       return messages;
