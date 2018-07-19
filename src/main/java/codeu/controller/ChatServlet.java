@@ -161,12 +161,6 @@ public class ChatServlet extends HttpServlet {
             cleanedMessageContent,
             Instant.now());
 
-    if(message.getParentId() != null){
-      UUID parentMessageId = message.getParentId();
-      Message parentMessage = messageStore.getMessage(parentMessageId);
-      parentMessage.addChild(message);
-    }
-
     messageStore.addMessage(message);
 
     // redirect to a GET request

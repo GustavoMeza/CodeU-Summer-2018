@@ -19,6 +19,9 @@ import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.store.persistence.PersistentDataStore;
 import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * This class is the interface between the application and PersistentDataStore, which handles
@@ -102,6 +105,11 @@ public class PersistentStorageAgent {
   /** Write a Conversation object to the Datastore service. */
   public void writeThrough(Message message) {
     persistentDataStore.writeThrough(message);
+  }
+
+  /** Write a HashMap object to the Datastore service. */
+  public void writeThrough(HashMap<UUID, ArrayList<Message>> messagesMap) {
+    persistentDataStore.writeThrough(messagesMap);
   }
 
 

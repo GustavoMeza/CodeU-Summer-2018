@@ -27,6 +27,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * This class handles all interactions with Google App Engine's Datastore service. On startup it
@@ -123,6 +125,8 @@ public class PersistentDataStore {
   public List<Message> loadMessages() throws PersistentDataStoreException {
 
     List<Message> messages = new ArrayList<>();
+    HashMap<UUID, ArrayList<Message>> messagesMap = new HashMap<UUID, ArrayList<Message>>();
+    ArrayList<Message> childrenMessages = new ArrayList<>();
 
     // Retrieve all messages from the datastore.
     Query query = new Query("chat-messages").addSort("creation_time", SortDirection.ASCENDING);
@@ -139,6 +143,7 @@ public class PersistentDataStore {
         String content = (String) entity.getProperty("content");
         Message message = new Message(uuid, conversationUuid, authorUuid, parentId, content, creationTime);
         messages.add(message);
+        messagesMap.put(parentId, childrenMessages);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
         // occur include network errors, Datastore service errors, authorization errors,
@@ -182,5 +187,12 @@ public class PersistentDataStore {
     conversationEntity.setProperty("title", conversation.getTitle());
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
     datastore.put(conversationEntity);
+  }
+
+  public void writeThrough(HashMap<UUID, ArrayList<Message>> messagesMap){
+    Entity mapEntity = new Entity("messages-map", messagesMap.keySet().toString());
+    mapEntity.setProperty("parent-messages", messagesMap.entrySet().toString());
+    //mapEntity.setProperty("children-messages", messagesMap..toString());
+    datastore.put(mapEntity);
   }
 }

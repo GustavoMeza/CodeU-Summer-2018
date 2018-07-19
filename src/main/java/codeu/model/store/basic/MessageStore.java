@@ -21,6 +21,8 @@ import codeu.model.store.persistence.PersistentStorageAgent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.lang.Object;
+import java.util.HashMap;
 
 /**
  * Store class that uses in-memory data structures to hold values and automatically loads from and
@@ -60,18 +62,36 @@ public class MessageStore {
 
   /** The in-memory list of Messages. */
   private List<Message> messages;
+  /** The in-memory map of Messages with parents and children messages defined. */
+  private static HashMap<UUID, ArrayList<Message>> messagesMap;
 
   /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
   private MessageStore(PersistentStorageAgent persistentStorageAgent) {
     this.persistentStorageAgent = persistentStorageAgent;
     messages = new ArrayList<>();
+    messagesMap = new HashMap<UUID, ArrayList<Message>>();
   }
 
   /** Add a new message to the current set of messages known to the application. */
   public void addMessage(Message message) {
     messages.add(message);
     persistentStorageAgent.writeThrough(message);
+
+    // add message to the HashMap
+    if(message.getParentId() != null){
+      ArrayList<Message> children = messagesMap.get(message.getParentId());
+      children.add(message);
+      messagesMap.replace(message.getParentId(), children);
+    }else{// message does not have a parent, start a new key value set
+      messagesMap.put(message.getId(), new ArrayList<Message>());
+    }
+    persistentStorageAgent.writeThrough(messagesMap);
   }
+
+/** Returns the HashMap with the children associated with their parent */
+public static HashMap<UUID, ArrayList<Message>> getChildrenMessages(){
+  return messagesMap;
+}
 
   /** Access the current set of Messages within the given Conversation. */
   public List<Message> getMessagesInConversation(UUID conversationId) {
