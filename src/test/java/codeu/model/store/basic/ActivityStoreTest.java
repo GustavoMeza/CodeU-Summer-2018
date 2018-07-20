@@ -110,4 +110,12 @@ public class ActivityStoreTest {
         Assert.assertNull(resultActivities);
     }
 
+    @Test
+    public void testAddActivity() {
+        activityStore.addActivity(ACTIVITY_ONE);
+        List<Activity> activities = activityStore.getActivities(0, 5);
+        Assert.assertEquals(4, activities.size());
+        Assert.assertEquals(ACTIVITY_ONE, activities.get(0));
+    }
+
 }

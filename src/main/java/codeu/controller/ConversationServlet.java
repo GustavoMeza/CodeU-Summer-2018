@@ -14,6 +14,7 @@
 
 package codeu.controller;
 
+import codeu.model.ActivityManager;
 import codeu.model.data.Conversation;
 import codeu.model.data.User;
 import codeu.model.store.basic.ConversationStore;
@@ -36,6 +37,9 @@ public class ConversationServlet extends HttpServlet {
   /** Store class that gives access to Conversations. */
   private ConversationStore conversationStore;
 
+  /** Manager class to be notified when an Activity happens */
+  private ActivityManager activityManager;
+
   /**
    * Set up state for handling conversation-related requests. This method is only called when
    * running in a server, not when running in a test.
@@ -45,6 +49,7 @@ public class ConversationServlet extends HttpServlet {
     super.init();
     setUserStore(UserStore.getInstance());
     setConversationStore(ConversationStore.getInstance());
+    setActivityManager(ActivityManager.getInstance());
   }
 
   /**
@@ -61,6 +66,14 @@ public class ConversationServlet extends HttpServlet {
    */
   void setConversationStore(ConversationStore conversationStore) {
     this.conversationStore = conversationStore;
+  }
+
+  /**
+   * Sets the ActivityManager used by this servlet. This function provides a common setup method for
+   * use by the test framework or the servlet's init() function.
+   */
+  void setActivityManager(ActivityManager activityManager) {
+    this.activityManager = activityManager;
   }
 
   /**
@@ -124,7 +137,8 @@ public class ConversationServlet extends HttpServlet {
     Conversation conversation =
         new Conversation(UUID.randomUUID(), user.getId(), conversationTitle, Instant.now());
 
-    conversationStore.addConversation(conversation);
+    activityManager.conversationCreated(conversation);
+
     response.sendRedirect("/chat/" + conversationTitle);
   }
 }

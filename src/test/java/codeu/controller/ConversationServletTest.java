@@ -14,6 +14,7 @@
 
 package codeu.controller;
 
+import codeu.model.ActivityManager;
 import codeu.model.data.Conversation;
 import codeu.model.data.User;
 import codeu.model.store.basic.ConversationStore;
@@ -43,6 +44,7 @@ public class ConversationServletTest {
   private RequestDispatcher mockRequestDispatcher;
   private ConversationStore mockConversationStore;
   private UserStore mockUserStore;
+  private ActivityManager mockActivityManager;
 
   @Before
   public void setup() {
@@ -62,6 +64,9 @@ public class ConversationServletTest {
 
     mockUserStore = Mockito.mock(UserStore.class);
     conversationServlet.setUserStore(mockUserStore);
+
+    mockActivityManager = Mockito.mock(ActivityManager.class);
+    conversationServlet.setActivityManager(mockActivityManager);
   }
 
   @Test
@@ -83,8 +88,8 @@ public class ConversationServletTest {
 
     conversationServlet.doPost(mockRequest, mockResponse);
 
-    Mockito.verify(mockConversationStore, Mockito.never())
-        .addConversation(Mockito.any(Conversation.class));
+    Mockito.verify(mockActivityManager, Mockito.never())
+        .conversationCreated(Mockito.any(Conversation.class));
     Mockito.verify(mockResponse).sendRedirect("/conversations");
   }
 
@@ -95,8 +100,8 @@ public class ConversationServletTest {
 
     conversationServlet.doPost(mockRequest, mockResponse);
 
-    Mockito.verify(mockConversationStore, Mockito.never())
-        .addConversation(Mockito.any(Conversation.class));
+    Mockito.verify(mockActivityManager, Mockito.never())
+        .conversationCreated(Mockito.any(Conversation.class));
     Mockito.verify(mockResponse).sendRedirect("/conversations");
   }
 
@@ -115,8 +120,8 @@ public class ConversationServletTest {
 
     conversationServlet.doPost(mockRequest, mockResponse);
 
-    Mockito.verify(mockConversationStore, Mockito.never())
-        .addConversation(Mockito.any(Conversation.class));
+    Mockito.verify(mockActivityManager, Mockito.never())
+        .conversationCreated(Mockito.any(Conversation.class));
     Mockito.verify(mockRequest).setAttribute("error", "Please enter only letters and numbers.");
     Mockito.verify(mockRequestDispatcher).forward(mockRequest, mockResponse);
   }
@@ -138,8 +143,8 @@ public class ConversationServletTest {
 
     conversationServlet.doPost(mockRequest, mockResponse);
 
-    Mockito.verify(mockConversationStore, Mockito.never())
-        .addConversation(Mockito.any(Conversation.class));
+    Mockito.verify(mockActivityManager, Mockito.never())
+        .conversationCreated(Mockito.any(Conversation.class));
     Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");
   }
 
@@ -162,7 +167,7 @@ public class ConversationServletTest {
 
     ArgumentCaptor<Conversation> conversationArgumentCaptor =
         ArgumentCaptor.forClass(Conversation.class);
-    Mockito.verify(mockConversationStore).addConversation(conversationArgumentCaptor.capture());
+    Mockito.verify(mockActivityManager).conversationCreated(conversationArgumentCaptor.capture());
     Assert.assertEquals(conversationArgumentCaptor.getValue().getTitle(), "test_conversation");
 
     Mockito.verify(mockResponse).sendRedirect("/chat/test_conversation");

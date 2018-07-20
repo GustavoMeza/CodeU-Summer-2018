@@ -14,6 +14,7 @@
 
 package codeu.controller;
 
+import codeu.model.ActivityManager;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
@@ -46,6 +47,7 @@ public class ChatServletTest {
   private ConversationStore mockConversationStore;
   private MessageStore mockMessageStore;
   private UserStore mockUserStore;
+  private ActivityManager mockActivityManager;
 
   @Before
   public void setup() {
@@ -68,6 +70,9 @@ public class ChatServletTest {
 
     mockUserStore = Mockito.mock(UserStore.class);
     chatServlet.setUserStore(mockUserStore);
+
+    mockActivityManager = Mockito.mock(ActivityManager.class);
+    chatServlet.setActivityManager(mockActivityManager);
   }
 
   @Test
@@ -123,7 +128,7 @@ public class ChatServletTest {
 
     chatServlet.doPost(mockRequest, mockResponse);
 
-    Mockito.verify(mockMessageStore, Mockito.never()).addMessage(Mockito.any(Message.class));
+    Mockito.verify(mockActivityManager, Mockito.never()).messageSent(Mockito.any(Message.class));
     Mockito.verify(mockResponse).sendRedirect("/login");
   }
 
@@ -134,7 +139,7 @@ public class ChatServletTest {
 
     chatServlet.doPost(mockRequest, mockResponse);
 
-    Mockito.verify(mockMessageStore, Mockito.never()).addMessage(Mockito.any(Message.class));
+    Mockito.verify(mockActivityManager, Mockito.never()).messageSent(Mockito.any(Message.class));
     Mockito.verify(mockResponse).sendRedirect("/login");
   }
 
@@ -156,7 +161,7 @@ public class ChatServletTest {
 
     chatServlet.doPost(mockRequest, mockResponse);
 
-    Mockito.verify(mockMessageStore, Mockito.never()).addMessage(Mockito.any(Message.class));
+    Mockito.verify(mockActivityManager, Mockito.never()).messageSent(Mockito.any(Message.class));
     Mockito.verify(mockResponse).sendRedirect("/conversations");
   }
 
@@ -184,7 +189,7 @@ public class ChatServletTest {
     chatServlet.doPost(mockRequest, mockResponse);
 
     ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
-    Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
+    Mockito.verify(mockActivityManager).messageSent(messageArgumentCaptor.capture());
     Assert.assertEquals("Test message.", messageArgumentCaptor.getValue().getContent());
     Assert.assertNull(messageArgumentCaptor.getValue().getParentId());
 
@@ -216,7 +221,7 @@ public class ChatServletTest {
     chatServlet.doPost(mockRequest, mockResponse);
 
     ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
-    Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
+    Mockito.verify(mockActivityManager).messageSent(messageArgumentCaptor.capture());
     Assert.assertEquals("Test message.", messageArgumentCaptor.getValue().getContent());
     Assert.assertEquals(mockParentId, messageArgumentCaptor.getValue().getParentId());
 
@@ -249,7 +254,7 @@ public class ChatServletTest {
     chatServlet.doPost(mockRequest, mockResponse);
 
     ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
-    Mockito.verify(mockMessageStore).addMessage(messageArgumentCaptor.capture());
+    Mockito.verify(mockActivityManager).messageSent(messageArgumentCaptor.capture());
     Assert.assertEquals(
         "Contains html and  content.", messageArgumentCaptor.getValue().getContent());
     Assert.assertNull(messageArgumentCaptor.getValue().getParentId());
