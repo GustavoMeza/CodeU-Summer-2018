@@ -17,6 +17,8 @@
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
 <%@ page import="codeu.model.store.basic.MessageStore" %>
+-<%@ page import="codeu.model.PusherProvider" %>
+-<%@ page import="codeu.view.ComponentProvider" %>
 <%
 Conversation conversation = (Conversation) request.getAttribute("conversation");
 List<Message> messages = (List<Message>) request.getAttribute("messages");
@@ -29,7 +31,22 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
   <link rel="stylesheet" href="/css/main.css" type="text/css">
   <link rel="stylesheet" href="/css/chat.css">
 
-  <script>
+  <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+
+  <script type="text/javascript">
+    var pusher = new Pusher('${PusherProvider.PUSHER_KEY}', {
+      cluster: 'us2',
+      encrypted: true
+    });
+
+    var channel = pusher.subscribe('${PusherProvider.CHAT_CHANNEL}');
+
+    channel.bind('${PusherProvider.MESSAGE_SENT}', function (data) {
+      var list = document.getElementById('message-list');
+      list.innerHTML += '<li>' + data.view + '</li>';
+      scrollChat();
+    });
+
     // scroll the chat div to the bottom
     function scrollChat() {
       var chatDiv = document.getElementById('chat');
@@ -83,8 +100,10 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
     <hr/>
 
     <div id="chat">
-      <ul>
+      <ul id="message-list">
     <%
+      ComponentProvider componentProvider = ComponentProvider.getInstance();
+
       MessageStore messageStore = MessageStore.getInstance();
       HashMap<UUID, ArrayList<Message>> messageMap = messageStore.getParentMessageMap();
       for (Message message : messages) {
