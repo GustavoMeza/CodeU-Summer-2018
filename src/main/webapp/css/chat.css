@@ -1,0 +1,39 @@
+.parent {
+  font-size: larger;
+  margin-bottom: -6px;
+  margin-left:-30px;
+}
+
+button.transparent {
+  border: 0;
+  padding: 0;
+  margin-left: 8px;
+  background: none;
+  cursor: pointer;
+}
+
+li {
+  margin: 4px;
+}
+
+div{
+  margin-top:20px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  margin-left:40px;
+  padding: 0;
+}
+
+#chat {
+  background-color: white;
+  height: 500px;
+  width: -webkit-fill-available;
+  overflow-y: scroll
+}
+
+#message {
+  margin-top: 6px;
+}

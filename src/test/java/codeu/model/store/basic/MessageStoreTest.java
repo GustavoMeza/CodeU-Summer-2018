@@ -4,6 +4,7 @@ import codeu.model.data.Message;
 import codeu.model.store.persistence.PersistentStorageAgent;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import org.junit.Assert;
@@ -18,9 +19,10 @@ public class MessageStoreTest {
   private PersistentStorageAgent mockPersistentStorageAgent;
 
   private final UUID CONVERSATION_ID_ONE = UUID.randomUUID();
+  private final UUID MESSAGE_ONE_ID = UUID.randomUUID();
   private final Message MESSAGE_ONE =
       new Message(
-          UUID.randomUUID(),
+          MESSAGE_ONE_ID,
           CONVERSATION_ID_ONE,
           UUID.randomUUID(),
           UUID.randomUUID(),
@@ -39,7 +41,7 @@ public class MessageStoreTest {
           UUID.randomUUID(),
           UUID.randomUUID(),
           UUID.randomUUID(),
-          UUID.randomUUID(),
+          MESSAGE_ONE_ID,
           "message three",
           Instant.ofEpochMilli(3000));
 
@@ -81,6 +83,57 @@ public class MessageStoreTest {
 
     Assert.assertEquals(inputMessage, resultMessage);
     Mockito.verify(mockPersistentStorageAgent).writeThrough(inputMessage);
+  }
+
+  @Test
+  public void testAddParentChildMessages() {
+    UUID parentMessageId = UUID.randomUUID();
+    UUID conversationId = UUID.randomUUID();
+    Message parentMessage =
+        new Message(
+            parentMessageId,
+            UUID.randomUUID(),
+            conversationId,
+            null,
+            "parent message",
+            Instant.now());
+    Message childMessageOne =
+        new Message(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            conversationId,
+            parentMessageId,
+            "child message one",
+            Instant.now());
+
+    Message childMessageTwo =
+        new Message(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            conversationId,
+            parentMessageId,
+            "child message two",
+            Instant.now());
+
+    messageStore.addMessage(parentMessage);
+    messageStore.addMessage(childMessageOne);
+    messageStore.addMessage(childMessageTwo);
+
+    HashMap<UUID, ArrayList<Message>> messagesByParentIdMap = messageStore.getParentMessageMap();
+    ArrayList<Message> childrenMessages = new ArrayList<Message>();
+    childrenMessages.add(childMessageOne);
+    childrenMessages.add(childMessageTwo);
+    Assert.assertEquals(messagesByParentIdMap.get(parentMessageId), childrenMessages);
+
+    Message childOneInMap = messagesByParentIdMap.get(parentMessageId).get(0);
+    Assert.assertEquals(childOneInMap, childMessageOne);
+
+    Message childTwoInMap = messagesByParentIdMap.get(parentMessageId).get(1);
+    Assert.assertEquals(childTwoInMap, childMessageTwo);
+
+    Mockito.verify(mockPersistentStorageAgent).writeThrough(parentMessage);
+    Mockito.verify(mockPersistentStorageAgent).writeThrough(childMessageOne);
+    Mockito.verify(mockPersistentStorageAgent).writeThrough(childMessageTwo);
   }
 
   @Test

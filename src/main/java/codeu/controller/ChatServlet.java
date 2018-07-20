@@ -147,12 +147,7 @@ public class ChatServlet extends HttpServlet {
       return;
     }
 
-// SETTING THE LAST ACTIVE ATTRIBUTE
-    //String username = request.getParameter("username");
-    //if(username != null){
-    //  User currentUser = userStore.getUser(username);
-      user.setLastLogin(Instant.now());
-    //}
+    user.setLastLogin(Instant.now());
 
     String requestUrl = request.getRequestURI();
     String conversationTitle = requestUrl.substring("/chat/".length());
