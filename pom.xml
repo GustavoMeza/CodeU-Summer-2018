@@ -106,6 +106,12 @@
       <version>4.0.1.Final</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.pusher</groupId>
+      <artifactId>pusher-http-java</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
   </dependencies>
 
   <build>
