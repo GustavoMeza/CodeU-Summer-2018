@@ -19,9 +19,6 @@ import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.store.persistence.PersistentDataStore;
 import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * This class is the interface between the application and PersistentDataStore, which handles
@@ -92,16 +89,6 @@ public class PersistentStorageAgent {
     return persistentDataStore.loadMessages();
   }
 
-  /**
-   * Retrieve all Message objects from the Datastore service in a HashMap. The returned list may be empty.
-   *
-   * @throws PersistentDataStoreException if an error was detected during the load from the
-   *     Datastore service
-   */
-  /*public HashMap<UUID, ArrayList<Message>> loadMessagesMap() throws PersistentDataStoreException {
-    return persistentDataStore.loadMessagesMap();
-  }*/
-
   /** Write a User object to the Datastore service. */
   public void writeThrough(User user) {
     persistentDataStore.writeThrough(user);
@@ -116,26 +103,4 @@ public class PersistentStorageAgent {
   public void writeThrough(Message message) {
     persistentDataStore.writeThrough(message);
   }
-
-  /** Write a HashMap object to the Datastore service. */
-  /*public void writeThrough(HashMap<UUID, ArrayList<Message>> messagesMap) {
-    persistentDataStore.writeThrough(messagesMap);
-  }*/
-
-
-  /** Retrieve the number of messages stored in the database. */
-  /*public int numberOfUsers(){
-    return persistentDataStore.loadUsers.size();
-  }*/
-
-  /** Retrieve the number of messages stored in the database. */
-/*  public int numberOfConversations(){
-    return persistentDataStore.loadConversations.size();
-  }*/
-
-  /** Retrieve the number of messages stored in the database. */
-  /*public int numberOfMessages(){
-    return persistentDataStore.loadMessages.size();
-  }*/
-
 }

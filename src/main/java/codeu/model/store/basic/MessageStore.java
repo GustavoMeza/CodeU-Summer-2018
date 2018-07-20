@@ -63,13 +63,13 @@ public class MessageStore {
   /** The in-memory list of Messages. */
   private List<Message> messages;
   /** The in-memory map of Messages with parents and children messages defined. */
-  private HashMap<UUID, ArrayList<Message>> messagesMap;
+  private HashMap<UUID, ArrayList<Message>> messagesByParentIdMap;
 
   /** This class is a singleton, so its constructor is private. Call getInstance() instead. */
   private MessageStore(PersistentStorageAgent persistentStorageAgent) {
     this.persistentStorageAgent = persistentStorageAgent;
     messages = new ArrayList<>();
-    messagesMap = new HashMap<UUID, ArrayList<Message>>();
+    messagesByParentIdMap = new HashMap<UUID, ArrayList<Message>>();
   }
 
   /** Add a new message to the current set of messages known to the application. */
@@ -79,22 +79,21 @@ public class MessageStore {
     ArrayList<Message> children;
     // add message to the HashMap
     if(message.getParentId() != null){
-      if(messagesMap.containsKey(message.getParentId())){
-        children = messagesMap.get(message.getParentId());
+      if(messagesByParentIdMap.containsKey(message.getParentId())){
+        children = messagesByParentIdMap.get(message.getParentId());
       }else{
         children = new ArrayList<Message>();
       }
       children.add(message);
-      messagesMap.replace(message.getParentId(), children);
+      messagesByParentIdMap.replace(message.getParentId(), children);
     }else{// message does not have a parent, start a new key value set
-      messagesMap.put(message.getId(), new ArrayList<Message>());
+      messagesByParentIdMap.put(message.getId(), new ArrayList<Message>());
     }
-    //persistentStorageAgent.writeThrough(messagesMap);
   }
 
 /** Returns the HashMap with the children associated with their parent */
-public HashMap<UUID, ArrayList<Message>> getChildrenMessages(){
-  return messagesMap;
+public HashMap<UUID, ArrayList<Message>> getParentMessageMap(){
+  return messagesByParentIdMap;
 }
 
   /** Access the current set of Messages within the given Conversation. */
@@ -120,44 +119,23 @@ public HashMap<UUID, ArrayList<Message>> getChildrenMessages(){
     return messagesByUser;
   }
 
-  // /** Access the current users set of Messages.
-  //  * @return the users messages in an ArrayList.
-  //  */
-  // public ArrayList<Message> getMessagesFromUser(User user){
-  //   ArrayList<Message> userMessages = new ArrayList<Message> ();
-  //   for(Message message : messages){
-  //     String author = UserStore.getInstance()
-  //       .getUser(message.getAuthorId()).getName();
-  //     if(author.equals(user.getName())){
-  //          userMessages.add(message);
-  //        }
-  //      }
-  //   return userMessages;
-  // }
-
   /** Sets the List of Messages stored by this MessageStore. */
   public void setMessages(List<Message> messages) {
     this.messages = messages;
-    //messagesMap = new HashMap<UUID, ArrayList<Message>>();
-    ArrayList<Message> children;;
+    ArrayList<Message> children;
     for(Message message : messages){
       if(message.getParentId() != null){
-        if(messagesMap.containsKey(message.getParentId())){
-          children = messagesMap.get(message.getParentId());
+        if(messagesByParentIdMap.containsKey(message.getParentId())){
+          children = messagesByParentIdMap.get(message.getParentId());
         }else{
           children = new ArrayList<Message>();
         }
         children.add(message);
-        messagesMap.replace(message.getParentId(), children);
       }else{// message does not have a parent, start a new key value set
-        messagesMap.put(message.getId(), new ArrayList<Message>());
+        messagesByParentIdMap.put(message.getId(), new ArrayList<Message>());
       }
     }
   }
-
-  /*public void setMessagesMap(HashMap<UUID, ArrayList<Message>> messagesMap){
-    this.messagesMap = messagesMap;
-  }*/
 
   /** Returns all the messages, use with caution. */
   public List<Message> getAllMessages() {

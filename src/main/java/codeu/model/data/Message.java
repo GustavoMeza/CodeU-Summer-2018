@@ -28,7 +28,6 @@ public class Message {
   private final UUID conversation;
   private final UUID author;
   private final UUID parent;
-  private List<Message> children;
   private final String content;
   private final Instant creation;
 

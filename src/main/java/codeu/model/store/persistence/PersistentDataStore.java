@@ -27,8 +27,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.HashMap;
-import java.util.ArrayList;
 
 /**
  * This class handles all interactions with Google App Engine's Datastore service. On startup it
@@ -185,15 +183,4 @@ public class PersistentDataStore {
     conversationEntity.setProperty("creation_time", conversation.getCreationTime().toString());
     datastore.put(conversationEntity);
   }
-
-  /*public void writeThrough(HashMap<UUID, ArrayList<Message>> messagesMap){
-    Entity mapEntity = new Entity("messages-map", messagesMap.entrySet());
-    //mapEntity.setProperty("parent-messages", messagesMap.keySet().toString());
-    for(UUID key : messagesMap.keySet()){
-      mapEntity.setProperty("parent-message", key.toString());
-      mapEntity.setProperty("children-messages", messagesMap.get(key));
-    }
-    //mapEntity.setProperty("children-messages", messagesMap..toString());
-    datastore.put(mapEntity);
-  }*/
 }

@@ -1,13 +1,7 @@
 .parent {
   font-size: larger;
   margin-bottom: -6px;
-  margin-left:-20px;
-}
-.parenttest{
-  font-size: larger;
-  margin-bottom: -6px;
-  margin-left:-20px;
-  color:orange;
+  margin-left:-30px;
 }
 
 button.transparent {
@@ -36,6 +30,7 @@ ul {
 #chat {
   background-color: white;
   height: 500px;
+  width: -webkit-fill-available;
   overflow-y: scroll
 }
 
