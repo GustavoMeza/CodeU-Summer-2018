@@ -31,6 +31,17 @@ public class ActivityManager {
     return instance;
   }
 
+  /**
+   * Static method to get the singleton instance, use only for testing
+   * @return An ActivityManager
+   */
+  public static ActivityManager getTestInstance(UserStore userStore, MessageStore messageStore,
+      ConversationStore conversationStore, Pusher pusher,
+      ComponentProvider componentProvider, ActivityStore activityStore) {
+    return new ActivityManager(userStore, messageStore, conversationStore, pusher,
+        componentProvider, activityStore);
+  }
+
   /** Store class that gives access to Users. */
   private final UserStore userStore;
 
