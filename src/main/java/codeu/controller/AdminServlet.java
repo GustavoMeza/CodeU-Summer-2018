@@ -77,7 +77,7 @@ public class AdminServlet extends HttpServlet {
     int maxCount = 0;
     String mostActiveUser =  null;
     for (User user : users) {
-      List<Message> userMessages = messageStore.getMessagesFromUser(user);
+      List<Message> userMessages = messageStore.getMessagesByUser(user.getId());
       currentCount = userMessages.size();
       if(currentCount > maxCount){
         maxCount = currentCount;
@@ -98,7 +98,7 @@ public class AdminServlet extends HttpServlet {
     int maxCount = 0;
     String wordiestUser =  null;
     for (User user : users) {
-      List<Message> userMessages = messageStore.getMessagesFromUser(user);
+      List<Message> userMessages = messageStore.getMessagesByUser(user.getId());
       for(Message message : userMessages){
         currentCount = currentCount + message.getContent().length();
       }
@@ -118,11 +118,10 @@ public class AdminServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-
     String username = (String) request.getSession().getAttribute("user");
-
     String newestUser = userStore.getNewestUser();
 
+    request.setAttribute("dailyUsers", userStore.numberOfDailyUsers());
     request.setAttribute("mostActiveUser", getMostActiveUser());
     request.setAttribute("wordiestUser", getWordiestUser());
     request.setAttribute("newestUser", newestUser);
@@ -131,7 +130,7 @@ public class AdminServlet extends HttpServlet {
     request.setAttribute("numberOfMessages", messageStore.numberOfMessages());
 
     if (username == null) {
-      // user is not logged in, don't let them add a message
+      // user is not logged in, don't let them access the page
       response.sendRedirect("/login");
       return;
     }else if (!userStore.isUserAdmin(username)) {
@@ -143,16 +142,4 @@ public class AdminServlet extends HttpServlet {
     }
 
   }
-
-  /**
-   * This function fires when a user submits the form on the chat page. It gets the logged-in
-   * username from the session, the conversation title from the URL, and the chat message from the
-   * submitted form data. It creates a new Message from that data, adds it to the model, and then
-   * redirects back to the chat page.
-   */
-  /*@Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws IOException, ServletException {
-        //This function will handle adding in new data to the chat app, but isn't needed for the prototype
-  }*/
 }

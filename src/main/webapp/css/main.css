@@ -14,6 +14,7 @@
  */
 
 body {
+  margin-top:20px;
   margin: 0;
   font-family: sans-serif;
   line-height: 1.6;
@@ -23,17 +24,28 @@ body {
   background-color: #eeeeee;
 }
 
-nav {
-  background-color: #283593;
+.navbar-brand {
+  padding: 0 15px;
+  height: 200px;
+  line-height: 80px;
 }
 
+nav {
+  line-height: 3;
+  background-color: #283593;
+}
 nav a {
+  text-align: center;
+  background-color: #283593;
+  line-height: 3;
+  margin: 15px;
   color: white;
   display: inline-block;
   font-size: 24px;
-  margin: 15px;
   text-decoration: none;
+  font-family: sans-serif;
 }
+
 
 #navTitle {
   font-size: 36px;
@@ -46,13 +58,22 @@ nav a {
 }
 
 h1 {
+  text-align:left;
   color: #757575;
 }
 
-input {
-  font-size: 18px;
+h2 {
+  text-align:center;
+  color: red;
 }
 
-button {
+div {
+  width:75%;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top: 50px;
+}
+
+input {
   font-size: 18px;
 }

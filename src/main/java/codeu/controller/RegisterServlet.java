@@ -53,6 +53,7 @@ public class RegisterServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
+    //super.doGet(request, response);
     request.getRequestDispatcher("/WEB-INF/view/register.jsp").forward(request, response);
   }
 
@@ -78,8 +79,9 @@ public class RegisterServlet extends HttpServlet {
     String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
     User user = new User(UUID.randomUUID(), username, hashedPassword, Instant.now());
-
     activityManager.userJoined(user);
+    //SETTING LAST LOGIN ATTRIBUTE
+        user.setLastLogin(Instant.now());
 
     response.sendRedirect("/login");
   }
