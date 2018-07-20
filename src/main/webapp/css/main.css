@@ -31,12 +31,13 @@ body {
 }
 
 nav {
+  text-align:center;
   line-height: 3;
-  background-color: #283593;
+  background-color: darkseagreen;
 }
 nav a {
   text-align: center;
-  background-color: #283593;
+  background-color: darkseagreen;
   line-height: 3;
   margin: 15px;
   color: white;
@@ -46,9 +47,25 @@ nav a {
   font-family: sans-serif;
 }
 
+nav b {
+text-align: center;
+border-bottom: 5px solid;
+line-height: 3;
+font-weight: 800;
+margin: 15px;
+color: white;
+border-bottom-color: darkcyan;
+font-size: 24px;
+font-family: sans-serif;
+}
+
 
 #navTitle {
-  font-size: 36px;
+  font-size: 50px;
+  width: -webkit-fill-available;
+  line-height: 40px;
+  -webkit-text-stroke-color: darkslategrey;
+  -webkit-text-stroke-width: thin;
 }
 
 #container {
@@ -58,13 +75,18 @@ nav a {
 }
 
 h1 {
-  text-align:left;
+  text-align:center;
+  font-size:35px;
   color: #757575;
 }
 
 h2 {
   text-align:center;
-  color: red;
+  color: darkslategrey;
+}
+
+li{
+  list-style-type: none;
 }
 
 div {
@@ -76,4 +98,32 @@ div {
 
 input {
   font-size: 18px;
+  margin-top: 50px;
+  margin-right:10px;
+  margin-left:10px;
+  border: none;
+  border-bottom: 2px solid #444;
+  background-color: #eeeeee;
+}
+
+hr {
+    color: antiquewhite;
+    background-color: darkcyan;
+    height: 5px;
+}
+
+button {
+  text-align:center;
+  background-color: skyblue;
+  border: none;
+  color: #444;
+  padding: 5px 10px;
+  font-size: 20px;
+  border-radius: 10px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+button:hover {
+    background-color: lightblue;
 }

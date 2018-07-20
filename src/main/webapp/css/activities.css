@@ -1,0 +1,14 @@
+#activity-board {
+  background-color: #eeeee;
+  width:500px;
+  height: 500px;
+  overflow-y: scroll
+}
+
+a{
+  color:#757575;
+}
+
+li{
+  margin-left: -100px;
+}
