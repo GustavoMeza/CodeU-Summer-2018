@@ -25,14 +25,6 @@ List<Activity> activities = (List<Activity>) request.getAttribute("activities");
   <title>Activity</title>
   <link rel="stylesheet" href="/css/main.css" type="text/css">
 
-  <style>
-    #activity-board {
-      background-color: white;
-      height: 500px;
-      overflow-y: scroll
-    }
-  </style>
-
 </head>
 <body>
   <%@ include file="../component/activity-helper.jsp" %>

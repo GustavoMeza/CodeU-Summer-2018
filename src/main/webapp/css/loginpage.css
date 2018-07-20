@@ -6,23 +6,26 @@ body {
 
 nav {
   text-align:center;
-  background: url(backgroundimage2.jpg) darkslategrey;
-  background-size:300px;
+  background: url(backgroundimage.jpg) darkslategrey;
+  background-size:940px;
 }
 
-
 nav b {
+  border-bottom: none;
   text-align: center;
-  background: url(backgroundimage2.jpg) darkslategrey;
-  background-size:300px;
-  line-height: 8;
+  line-height: 7;
   column-width: 100000px;
-  color: black;
+  color: white;
   display: inline-block;
-  font-size: 24px;
   text-decoration: none;
   font-family: monospace;
   font-weight: bolder;
+}
+
+b#navTitle{
+  background:none;
+  line-height:5.7;
+  text-shadow: 6px 6px 3px rgba(0,0,0,0.3);
 }
 
 div {
@@ -34,16 +37,17 @@ form {
 }
 
 input {
-  text-align:left;
+  margin-top:50px;
+  text-align:center;
   border: none;
-  border-bottom: 2px solid fuchsia;
+  border-bottom: 2px solid darkcyan;
   background-color: #eeeeee;
   outline: none;
 }
 
 button {
   text-align:center;
-  background-color: darkturquoise;
+  background-color: darkcyan;
   border: none;
   color: white;
   padding: 15px 32px;
@@ -51,6 +55,7 @@ button {
   border-radius: 16px;
   -webkit-text-stroke-width: thin;
   transition-duration: 0.4s;
+  cursor: pointer;
 }
 
 button:hover {

@@ -17,7 +17,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CodeU Chat App</title>
+  <title>Binary-Search-Three CodeU Chat App</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/loginpage.css">
 </head>
@@ -25,7 +25,7 @@
 
   <nav>
     <div class="nav-wrapper">
-        <b id="navTitle" href="/ center">CODEU CHAT APP</b>
+        <b id="navTitle" href="/ center">BINARY-SEARCH-THREE CODEU CHAT APP</b>
     </div>
   </nav>
 
@@ -37,13 +37,9 @@
       <% } %>
 
       <form action="/login" method="POST">
-        <label for="username">USERNAME: </label>
+        <input placeholder="USERNAME" type="text" name="username" id="username">
         <br/>
-        <input type="text" name="username" id="username">
-        <br/>
-        <label for="password">PASSWORD: </label>
-        <br/>
-        <input type="password" name="password" id="password">
+        <input placeholder="PASSWORD" type="password" name="password" id="password">
         <br/><br/>
         <button type="/login">LOGIN</button>
         <br/><br/>
