@@ -9,6 +9,8 @@ import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Date;
+import org.ocpsoft.prettytime.PrettyTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -40,9 +42,9 @@ public class ComponentProvider {
     }
 
     StringBuilder sBuilder = new StringBuilder();
-    sBuilder.append(formatCreationTime(activity.getCreatedAt()));
     sBuilder.append(formatUserName(userId));
-    sBuilder.append(" joined!");
+    sBuilder.append(" joined! ");
+    sBuilder.append(formatCreationTime(activity.getCreatedAt()));
     return sBuilder.toString();
   }
 
@@ -60,10 +62,10 @@ public class ComponentProvider {
     }
 
     StringBuilder sBuilder = new StringBuilder();
-    sBuilder.append(formatCreationTime(activity.getCreatedAt()));
     sBuilder.append(formatUserName(conversation.getOwnerId()));
     sBuilder.append(" created a new conversation: ");
     sBuilder.append(formatConversation(conversationId));
+    sBuilder.append(" " + formatCreationTime(activity.getCreatedAt()));
     return sBuilder.toString();
   }
 
@@ -81,12 +83,12 @@ public class ComponentProvider {
     }
 
     StringBuilder sBuilder = new StringBuilder();
-    sBuilder.append(formatCreationTime(activity.getCreatedAt()));
     sBuilder.append(formatUserName(message.getAuthorId()));
     sBuilder.append(" sent a message in ");
     sBuilder.append(formatConversation(message.getConversationId()));
     sBuilder.append(": ");
     sBuilder.append(formatMessage(messageId));
+    sBuilder.append(" " + formatCreationTime(activity.getCreatedAt()));
     return sBuilder.toString();
   }
 
@@ -140,9 +142,9 @@ public class ComponentProvider {
    */
   public String formatCreationTime(Instant time) {
     // Todo: Change this to show in local time.
-    LocalDateTime datetime = LocalDateTime.ofInstant(time, ZoneOffset.UTC);
-    String timeStamp = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss").format(datetime);
-    return String.format("<strong>%s GMT: </strong>", timeStamp);
+    Date datetime = Date.from(time);
+    PrettyTime formattedTime = new PrettyTime();
+		return formattedTime.format(datetime);
   }
 
   /**
