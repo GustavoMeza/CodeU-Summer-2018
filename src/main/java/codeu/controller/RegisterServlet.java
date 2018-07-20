@@ -1,5 +1,6 @@
 package codeu.controller;
 
+import codeu.model.ActivityManager;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.UUID;
@@ -19,6 +20,9 @@ public class RegisterServlet extends HttpServlet {
   /** Store class that gives access to Users. */
   private UserStore userStore;
 
+  /** Manager class to be notified when an Activity happens */
+  private ActivityManager activityManager;
+
   /**
    * Set up state for handling registration-related requests. This method is only called when
    * running in a server, not when running in a test.
@@ -27,6 +31,7 @@ public class RegisterServlet extends HttpServlet {
   public void init() throws ServletException {
     super.init();
     setUserStore(UserStore.getInstance());
+    setActivityManager(ActivityManager.getInstance());
   }
 
   /**
@@ -35,6 +40,14 @@ public class RegisterServlet extends HttpServlet {
    */
   void setUserStore(UserStore userStore) {
     this.userStore = userStore;
+  }
+
+  /**
+   * Sets the ActivityManager used by this servlet. This function provides a common setup method for
+   * use by the test framework or the servlet's init() function.
+   */
+  void setActivityManager(ActivityManager activityManager) {
+    this.activityManager = activityManager;
   }
 
   @Override
@@ -66,7 +79,7 @@ public class RegisterServlet extends HttpServlet {
     String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
     User user = new User(UUID.randomUUID(), username, hashedPassword, Instant.now());
-    userStore.addUser(user);
+    activityManager.userJoined(user);
     //SETTING LAST LOGIN ATTRIBUTE
         user.setLastLogin(Instant.now());
 

@@ -47,6 +47,8 @@ public class ActivityStore {
         this.conversationStore = conversationStore;
         this.messageStore = messageStore;
         this.userStore = userStore;
+
+        generateActivityList();
     }
 
     /**
@@ -92,9 +94,17 @@ public class ActivityStore {
      * @return if request makes sense will return the requested portion of list, null otherwise.
      */
     public List<Activity> getActivities(int offSet, int maxElements) {
-        generateActivityList(); // Super bad idea!
         int indexTo = Math.min(activities.size(), offSet + maxElements);
         if(offSet > maxElements) return null;
         return activities.subList(offSet, indexTo);
+    }
+
+    /**
+     * This method adds an activity to both the data store and the in-memory list
+     * @param activity the activity to be added.
+     */
+    public void addActivity(Activity activity) {
+        // Todo: Add activities to datastore, not only to in-memory list.
+        activities.add(0, activity);
     }
 }
