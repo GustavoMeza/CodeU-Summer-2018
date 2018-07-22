@@ -98,38 +98,17 @@ public class ComponentProvider {
    * @return String with the message layout in Chat View.
    */
   public String messageSentInChat(Message message) {
-    StringBuilder formattedChat = new StringBuilder();
 
-    // Parent part of layout
-    if(message.getParentId() != null) {
-      Message parent = MessageStore.getInstance().getMessage(message.getParentId());
-      String formattedParent = String.format("<div class=\"parent\">%s</div>&#8618;",
-          formatMessageInChat(parent));
-      formattedChat.append(formattedParent);
-    }
+      // Button part of layout
+      String replyButton = String.format(
+          "<button onclick='reply(\"%s\", \"%s\")' class='transparent'>&#8594;</button>",
+          message.getId(), message.getContent());
 
-    // Message part of layout
-    formattedChat.append(formatMessageInChat(message));
-
-    // Reply label to be shown as information to send messages
-    String replyLabel = formatMessageInChat(message);
-
-    // Label is going to be passed as a string argument, so it should be processed
-    // for instance <a href="/">link</a> should be <a href=\"/\">link</a>
-    StringBuilder replyLabelArgument = new StringBuilder();
-    for(char c : replyLabel.toCharArray()) {
-      if(c == '\"') replyLabelArgument.append("\\");
-      replyLabelArgument.append(c);
-    }
-
-    // Button part of layout
-    String replyButton = String.format(
-        "<button onclick='reply(\"%s\", \"%s\")' class='transparent'>&#8618;</button>",
-        message.getId().toString(),
-        replyLabelArgument.toString());
-    formattedChat.append(replyButton);
-
-    return formattedChat.toString();
+      return String.format("<div style=\"width:auto\">%s: %s %s %s</div>",
+          formatUserName(message.getAuthorId()),
+          formatMessage(message.getId()),
+          formatCreationTime(message.getCreationTime()),
+          replyButton);
   }
 
 
