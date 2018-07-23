@@ -16,6 +16,7 @@ package codeu.controller;
 
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import codeu.model.store.StorageHelper;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import java.time.Instant;
@@ -25,14 +26,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.List;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+@MultipartConfig
 /** Servlet class responsible for the profile page. */
 public class ProfileServlet extends HttpServlet {
 
@@ -115,17 +119,24 @@ public class ProfileServlet extends HttpServlet {
     user.setLastLogin(Instant.now());
 
 
-    String aboutMeContent = request.getParameter("About Me");
+    String method = (String) request.getAttribute("_method");
+    if(method.equals("upload-image")) {
+      Part image = (Part) request.getAttribute("image");
+      user.setAvatarUrl(StorageHelper.getInstance().uploadImage(image));
+      userStore.updateUser(user);
+    }
+    if(method.equals("upload-aboutme")) {
+      String aboutMeContent = request.getParameter("About Me");
 
-    // this removes any HTML from the message content
-    String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
+      // this removes any HTML from the message content
+      String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
       user.setAboutMe(cleanedAboutMeContent);
       userStore.updateUser(user);
 
+    }
 
     // redirect to a GET request
     response.sendRedirect("/users/" + username);
   }
-
 
 }
