@@ -25,33 +25,7 @@
 <%
   Conversation conversation = (Conversation) request.getAttribute("conversation");
   List<Message> messages = (List<Message>) request.getAttribute("messages");
-%>
-
-
-<%!
-  private HashMap<UUID, ArrayList<Message>> messageMap = MessageStore.getInstance().getParentMessageMap();
-  private ComponentProvider componentProvider = ComponentProvider.getInstance();
-
-  private String buildSubTree(Message message, int depth) {
-    StringBuilder childrenHtml = new StringBuilder();
-    List<Message> childrenMessages = messageMap.get(message.getId());
-    for (Message nextMessage : childrenMessages)
-      childrenHtml.append(buildSubTree(nextMessage, depth+1));
-
-    return String.format("<li style=\"padding-left:%dpx\">%s</li><ul id=\"list%s\">%s</ul>",
-            depth*12,
-            componentProvider.messageSentInChat(message),
-            message.getId(),
-            childrenHtml.toString());
-  }
-
-  public String formatMessageTree(List<Message> messages) {
-    StringBuilder html = new StringBuilder();
-    for (Message message : messages)
-      if(message.getParentId() == null)
-        html.append(buildSubTree(message, 0));
-    return html.toString();
-  }
+  ComponentProvider componentProvider = ComponentProvider.getInstance();
 %>
 
 <!DOCTYPE html>
@@ -64,18 +38,76 @@
   <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
 
   <script type="text/javascript">
-    /*var pusher = new Pusher('${PusherProvider.PUSHER_KEY}', {
+    // Pusher code
+    var pusher = new Pusher('${PusherProvider.PUSHER_KEY}', {
       cluster: 'us2',
       encrypted: true
     });
 
     var channel = pusher.subscribe('${PusherProvider.CHAT_CHANNEL}');
 
+    // When notification received
     channel.bind('${PusherProvider.MESSAGE_SENT}', function (data) {
-      var list = document.getElementById('list');
-      list.innerHTML += '<li>' + data.view + '</li>';
+      messages[data.id] = {};
+      messages[data.id].view = data.view;
+      messages[data.id].children = [];
+      messages[data.id].depth = data.parentId == "" ? 0 : messages[data.parentId].depth+1;
+      var list = document.getElementById('message-list'+data.parentId);
+      list.innerHTML += formatMessageViewGroup(data.id, "");
       scrollChat();
-    });*/
+    });
+
+    var messages = {};
+    var orderedRootMessages = [];
+
+    function formatMessageViewGroup(messageId, childrenHtml) {
+      var message = messages[messageId];
+      return "<li style=\"padding-left:" + message.depth*12 + "px\">" + message.view + "</li>"
+          + "<ul id=\"message-list" + messageId + "\">" + childrenHtml + "</ul>"
+    }
+
+    function buildSubTree(messageId, depth) {
+      messages[messageId].depth = depth;
+      var childrenHtml = "";
+      messages[messageId].children.forEach(function (childId) {
+        childrenHtml += buildSubTree(childId, depth+1);
+      });
+      return formatMessageViewGroup(messageId, childrenHtml);
+    }
+
+    function makeChatTree() {
+      var message_list = document.getElementById("message-list");
+      orderedRootMessages.forEach(function (value) {
+        message_list.innerHTML += buildSubTree(value, 0);
+      });
+    }
+
+    function setup() {
+      <% HashMap<UUID, ArrayList<Message>> messageMap = MessageStore.getInstance().getParentMessageMap(); %>
+      <% for(Message message : messages) {
+        String view = componentProvider.messageSentInChat(message);
+        StringBuilder viewBuilder = new StringBuilder();
+        for(char c : view.toCharArray()) {
+          if(c == '"')
+            viewBuilder.append("\\");
+          viewBuilder.append(c);
+        }
+        String formattedView = viewBuilder.toString(); %>
+        messages["<%=message.getId()%>"] = {};
+        messages["<%=message.getId()%>"].view = "<%=formattedView%>";
+        messages["<%=message.getId()%>"].children = [];
+          <% for(Message child : messageMap.get(message.getId())) { %>
+            messages["<%=message.getId()%>"].children.push("<%=child.getId()%>");
+          <% } %>
+      <% } %>
+      <% for(Message message : messages) { %>
+        <% if(message.getParentId() == null) { %>
+          orderedRootMessages.push("<%=message.getId()%>");
+        <% } %>
+      <% } %>
+      makeChatTree();
+      scrollChat();
+    }
 
     // scroll the chat div to the bottom
     function scrollChat() {
@@ -102,8 +134,47 @@
       container.innerHTML = html;
     }
   </script>
+
+  <style>
+    #chat div {
+      width: auto;
+      margin: 0;
+    }
+
+    .message-group-view div {
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .profile-image {
+      width: 50px;
+      padding-top: 16px;
+    }
+
+    .profile-image img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .message-header  > * {
+      display: inline;
+      font-size: xx-small;
+    }
+
+    .message-card > div {
+      display: block;
+    }
+    .message-content {
+      padding: 2px 10px;
+      background-color: #eee;
+      border-radius: 10px;
+    }
+  </style>
 </head>
-<body onload="scrollChat()">
+<body onload="setup()">
 
   <%@ include file="../component/navbar.jsp" %>
 
@@ -116,7 +187,6 @@
 
     <div id="chat">
       <ul id="message-list">
-    <%= formatMessageTree(messages) %>
       </ul>
     </div>
 
