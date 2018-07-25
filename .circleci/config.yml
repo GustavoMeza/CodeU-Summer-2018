@@ -1,0 +1,63 @@
+version: 2
+jobs:
+  build-job:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run: 
+          name: Resolve dependencies
+          command: mvn dependency:go-offline
+      - run: 
+          name: Compile code
+          command: mvn compile
+  test-job:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run: 
+          name: Resolve dependencies
+          command: mvn dependency:go-offline
+      - run: 
+          name: Run tests
+          command: mvn test
+  deploy-job:
+    docker: 
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - run: ls -R
+      - run:
+          name: Uncompress cloud-sdk files
+          command: tar xzf google-cloud-sdk.tar.gz
+      - run:
+          name: Install cloud-sdk files
+          command: ./google-cloud-sdk/install.sh
+      - run:
+          name: Store Service Account
+          command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+      - run: |
+          sudo ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+          sudo ./google-cloud-sdk/bin/gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+          sudo ./google-cloud-sdk/bin/gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+      - run: 
+          name: Resolve dependencies
+          command: mvn dependency:go-offline
+      - run: 
+          name: Deploy Master to GCP
+          command: mvn appengine:update
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - build-job
+      - test-job:
+          requires:
+            -  build-job
+      - deploy-job:
+          requires:
+            - test-job
+          filters:
+            branches:
+              only: master
