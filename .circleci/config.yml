@@ -3,7 +3,6 @@ jobs:
   build-job:
     docker:
       - image: circleci/openjdk:8-jdk
-    working_directory: ~
     steps:
       - checkout
       - run: 
@@ -15,7 +14,6 @@ jobs:
   test-job:
     docker:
       - image: circleci/openjdk:8-jdk
-    working_directory: ~
     steps:
       - checkout
       - run: 
@@ -27,7 +25,6 @@ jobs:
   deploy-job:
     docker: 
       - image: circleci/openjdk:8-jdk
-    working_directory: ~
     steps:
       - run:
           name: Uncompress cloud-sdk files
