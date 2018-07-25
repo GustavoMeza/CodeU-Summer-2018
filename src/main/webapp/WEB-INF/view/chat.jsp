@@ -62,7 +62,7 @@
 
     function formatMessageViewGroup(messageId, childrenHtml) {
       var message = messages[messageId];
-      return "<li style=\"padding-left:" + message.depth*12 + "px\">" + message.view + "</li>"
+      return "<li style=\"padding-left:" + message.depth*12 + "px;\">" + message.view + "</li>"
           + "<ul id=\"message-list" + messageId + "\">" + childrenHtml + "</ul>"
     }
 
@@ -141,14 +141,17 @@
       margin: 0;
     }
 
+    .message-group-view {
+      margin-top: 8px;
+    }
+
     .message-group-view div {
       display: inline-block;
       vertical-align: top;
     }
 
     .profile-image {
-      width: 50px;
-      padding-top: 16px;
+      padding: 16px 8px;
     }
 
     .profile-image img {
@@ -167,10 +170,21 @@
     .message-card > div {
       display: block;
     }
+
     .message-content {
       padding: 2px 10px;
+      margin-bottom: 8px;
       background-color: #eee;
       border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #reply-to {
+      display: inline-block;
+      width: auto;
+      background-color: lightgray;
+      margin-left: 10px;
+      cursor: default;
     }
   </style>
 </head>
@@ -192,7 +206,7 @@
 
     <hr/>
 
-      <div class="parent" id="reply-to"></div>
+      <div class="message-content" id="reply-to"></div>
     <% if (request.getSession().getAttribute("user") != null) { %>
     <form action="/chat/<%= conversation.getTitle() %>" method="POST">
         <input type="hidden" name="parent" id="parent">
