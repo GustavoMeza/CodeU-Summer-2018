@@ -25,11 +25,21 @@ jobs:
           name: Run tests
           command: mvn test
   deploy-job:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    docker: 
+      - image: vincit/circleci-openjdk-gcloud
+        auth:
+          username: _json_key
+          password: $GCLOUD_SERVICE_KEY
     working_directory: ~
     steps:
       - checkout
+      - run:
+          name: Store Service Account
+          command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+      - run: |
+          sudo gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+          sudo gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+          sudo gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run: 
           name: Resolve dependencies
           command: mvn dependency:go-offline
