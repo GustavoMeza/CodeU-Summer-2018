@@ -26,6 +26,8 @@ jobs:
     docker: 
       - image: circleci/openjdk:8-jdk
     steps:
+      - checkout
+      - run: ls -R
       - run:
           name: Uncompress cloud-sdk files
           command: tar xzf google-cloud-sdk.tar.gz
@@ -39,7 +41,6 @@ jobs:
           sudo ./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
           sudo ./google-cloud-sdk/bin/gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
           sudo ./google-cloud-sdk/bin/gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
-      - checkout
       - run: 
           name: Resolve dependencies
           command: mvn dependency:go-offline
