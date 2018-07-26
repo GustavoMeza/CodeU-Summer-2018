@@ -24,9 +24,15 @@ jobs:
           command: mvn test
   deploy-job:
     docker: 
-      - image: google/cloud-sdk:latest
+      - image: circleci/openjdk:8-jdk
     steps:
       - checkout
+      - run:
+          name: Setting up Google Cloud SDK
+          command: export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
+                   echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+                   curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+                   apt-get update -y && apt-get install google-cloud-sdk -y
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
