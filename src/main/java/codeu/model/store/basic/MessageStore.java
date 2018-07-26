@@ -69,25 +69,18 @@ public class MessageStore {
   private MessageStore(PersistentStorageAgent persistentStorageAgent) {
     this.persistentStorageAgent = persistentStorageAgent;
     messages = new ArrayList<>();
-    messagesByParentIdMap = new HashMap<UUID, ArrayList<Message>>();
+    messagesByParentIdMap = new HashMap<>();
   }
 
   /** Add a new message to the current set of messages known to the application. */
   public void addMessage(Message message) {
     messages.add(message);
     persistentStorageAgent.writeThrough(message);
-    ArrayList<Message> children;
-    // add message to the HashMap
-    if(message.getParentId() != null){
-      if(messagesByParentIdMap.containsKey(message.getParentId())){
-        children = messagesByParentIdMap.get(message.getParentId());
-      }else{
-        children = new ArrayList<Message>();
-      }
+    messagesByParentIdMap.put(message.getId(), new ArrayList<>());
+    if(message.getParentId() != null && messagesByParentIdMap.containsKey(message.getParentId())) {
+      ArrayList<Message> children = messagesByParentIdMap.get(message.getParentId());
       children.add(message);
       messagesByParentIdMap.replace(message.getParentId(), children);
-    }else{// message does not have a parent, start a new key value set
-      messagesByParentIdMap.put(message.getId(), new ArrayList<Message>());
     }
   }
 
@@ -122,19 +115,16 @@ public HashMap<UUID, ArrayList<Message>> getParentMessageMap(){
   /** Sets the List of Messages stored by this MessageStore. */
   public void setMessages(List<Message> messages) {
     this.messages = messages;
-    ArrayList<Message> children;
-    for(Message message : messages){
-      if(message.getParentId() != null){
-        if(messagesByParentIdMap.containsKey(message.getParentId())){
-          children = messagesByParentIdMap.get(message.getParentId());
-        }else{
-          children = new ArrayList<Message>();
-        }
+
+    for(Message message : messages)
+      messagesByParentIdMap.put(message.getId(), new ArrayList<>());
+
+    for(Message message : messages)
+      if(message.getParentId() != null && messagesByParentIdMap.containsKey(message.getParentId())) {
+        ArrayList<Message> children = messagesByParentIdMap.get(message.getParentId());
         children.add(message);
-      }else{// message does not have a parent, start a new key value set
-        messagesByParentIdMap.put(message.getId(), new ArrayList<Message>());
+        messagesByParentIdMap.replace(message.getParentId(), children);
       }
-    }
   }
 
   /** Returns all the messages, use with caution. */

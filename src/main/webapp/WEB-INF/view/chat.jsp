@@ -19,9 +19,13 @@
 <%@ page import="codeu.model.store.basic.MessageStore" %>
 -<%@ page import="codeu.model.PusherProvider" %>
 -<%@ page import="codeu.view.ComponentProvider" %>
+<%@ page import="java.util.UUID" %>
+<%@ page import="java.util.Stack" %>
+
 <%
-Conversation conversation = (Conversation) request.getAttribute("conversation");
-List<Message> messages = (List<Message>) request.getAttribute("messages");
+  Conversation conversation = (Conversation) request.getAttribute("conversation");
+  List<Message> messages = (List<Message>) request.getAttribute("messages");
+  ComponentProvider componentProvider = ComponentProvider.getInstance();
 %>
 
 <!DOCTYPE html>
@@ -34,6 +38,7 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
   <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
 
   <script type="text/javascript">
+    // Pusher code
     var pusher = new Pusher('${PusherProvider.PUSHER_KEY}', {
       cluster: 'us2',
       encrypted: true
@@ -41,11 +46,68 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
     var channel = pusher.subscribe('${PusherProvider.CHAT_CHANNEL}');
 
+    // When notification received
     channel.bind('${PusherProvider.MESSAGE_SENT}', function (data) {
-      var list = document.getElementById('message-list');
-      list.innerHTML += '<li>' + data.view + '</li>';
+      messages[data.id] = {};
+      messages[data.id].view = data.view;
+      messages[data.id].children = [];
+      messages[data.id].depth = data.parentId == "" ? 0 : messages[data.parentId].depth+1;
+      var list = document.getElementById('message-list'+data.parentId);
+      list.innerHTML += formatMessageViewGroup(data.id, "");
       scrollChat();
     });
+
+    var messages = {};
+    var orderedRootMessages = [];
+
+    function formatMessageViewGroup(messageId, childrenHtml) {
+      var message = messages[messageId];
+      return "<li style=\"padding-left:" + message.depth*12 + "px;\">" + message.view + "</li>"
+          + "<ul id=\"message-list" + messageId + "\">" + childrenHtml + "</ul>"
+    }
+
+    function buildSubTree(messageId, depth) {
+      messages[messageId].depth = depth;
+      var childrenHtml = "";
+      messages[messageId].children.forEach(function (childId) {
+        childrenHtml += buildSubTree(childId, depth+1);
+      });
+      return formatMessageViewGroup(messageId, childrenHtml);
+    }
+
+    function makeChatTree() {
+      var message_list = document.getElementById("message-list");
+      orderedRootMessages.forEach(function (value) {
+        message_list.innerHTML += buildSubTree(value, 0);
+      });
+    }
+
+    function setup() {
+      <% HashMap<UUID, ArrayList<Message>> messageMap = MessageStore.getInstance().getParentMessageMap(); %>
+      <% for(Message message : messages) {
+        String view = componentProvider.messageSentInChat(message);
+        StringBuilder viewBuilder = new StringBuilder();
+        for(char c : view.toCharArray()) {
+          if(c == '"')
+            viewBuilder.append("\\");
+          viewBuilder.append(c);
+        }
+        String formattedView = viewBuilder.toString(); %>
+        messages["<%=message.getId()%>"] = {};
+        messages["<%=message.getId()%>"].view = "<%=formattedView%>";
+        messages["<%=message.getId()%>"].children = [];
+          <% for(Message child : messageMap.get(message.getId())) { %>
+            messages["<%=message.getId()%>"].children.push("<%=child.getId()%>");
+          <% } %>
+      <% } %>
+      <% for(Message message : messages) { %>
+        <% if(message.getParentId() == null) { %>
+          orderedRootMessages.push("<%=message.getId()%>");
+        <% } %>
+      <% } %>
+      makeChatTree();
+      scrollChat();
+    }
 
     // scroll the chat div to the bottom
     function scrollChat() {
@@ -72,25 +134,63 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
       container.innerHTML = html;
     }
   </script>
-</head>
-<body onload="scrollChat()">
 
-  <%@ include file="../component/activity-helper.jsp" %>
+  <style>
+    #chat div {
+      width: auto;
+      margin: 0;
+    }
+
+    .message-group-view {
+      margin-top: 8px;
+    }
+
+    .message-group-view div {
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .profile-image {
+      padding: 16px 8px;
+    }
+
+    .profile-image img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .message-header  > * {
+      display: inline;
+      font-size: xx-small;
+    }
+
+    .message-card > div {
+      display: block;
+    }
+
+    .message-content {
+      padding: 2px 10px;
+      margin-bottom: 8px;
+      background-color: #eee;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #reply-to {
+      display: inline-block;
+      width: auto;
+      background-color: lightgray;
+      margin-left: 10px;
+      cursor: default;
+    }
+  </style>
+</head>
+<body onload="setup()">
 
   <%@ include file="../component/navbar.jsp" %>
-
-  <%!
-      /**
-       * Method that creates the layout part only for a message in the Chat View.
-       * @param message The message to be formatted.
-       * @return String with the message layout in Chat View.
-       */
-      public String formatMessagePartInChat(Message message) {
-          return String.format("%s: %s",
-                  formatUserName(message.getAuthorId()),
-                  message.getContent());
-      }
-  %>
 
   <div id="container">
 
@@ -101,47 +201,12 @@ List<Message> messages = (List<Message>) request.getAttribute("messages");
 
     <div id="chat">
       <ul id="message-list">
-    <%
-      ComponentProvider componentProvider = ComponentProvider.getInstance();
-
-      MessageStore messageStore = MessageStore.getInstance();
-      HashMap<UUID, ArrayList<Message>> messageMap = messageStore.getParentMessageMap();
-      for (Message message : messages) {
-        if(message.getParentId() == null){
-          String formattedMessage = String.format("<div class=\"parent\">%s</div>&#8618;",
-                  formatMessagePartInChat(message));
-          out.print(formattedMessage);
-          if(messageMap.get(message.getId()) != null){
-            List<Message> childrenMessages = messageMap.get(message.getId());
-            for(Message nextMessage : childrenMessages){
-              out.print("<li>");
-              out.print(formatMessagePartInChat(nextMessage));
-            }
-          }
-          // Reply label to be shown as information to send messages
-          String replyLabel = formatMessagePartInChat(message);
-          // Label is going to be passed as a string argument, so it should be processed
-          // for instance <a href="/">link</a> should be <a href=\"/\">link</a>
-          StringBuilder replyLabelArgument = new StringBuilder();
-          for(char c : replyLabel.toCharArray()) {
-              if(c == '\"') replyLabelArgument.append("\\");
-              replyLabelArgument.append(c);
-          }
-          // Button part of layout
-          String replyButton = String.format(
-                  "<button onclick='reply(\"%s\", \"%s\")' class='transparent'>&#8618;</button>",
-                  message.getId().toString(),
-                  replyLabelArgument.toString());
-          out.print(replyButton);
-        }
-      }
-    %>
       </ul>
     </div>
 
     <hr/>
 
-      <div class="parent" id="reply-to"></div>
+      <div class="message-content" id="reply-to"></div>
     <% if (request.getSession().getAttribute("user") != null) { %>
     <form action="/chat/<%= conversation.getTitle() %>" method="POST">
         <input type="hidden" name="parent" id="parent">
