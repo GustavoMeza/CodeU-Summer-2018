@@ -34,9 +34,6 @@ jobs:
           name: Get Google Gloud credentials
           command: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
       - run: 
-          name: Resolve dependencies
-          command: mvn dependency:go-offline
-      - run: 
           name: Deploy Master to GCP
           command: mvn appengine:update
 workflows:
