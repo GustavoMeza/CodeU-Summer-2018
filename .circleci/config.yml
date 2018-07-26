@@ -24,7 +24,7 @@ jobs:
           command: mvn test
   deploy-job:
     docker: 
-      - image: mrsvan/google-cloud-sdk-app-engine-java
+      - image: mrsvan/google-cloud-sdk-app-engine-java:jdk8-latest
     steps:
       - checkout
       - run:
@@ -33,9 +33,6 @@ jobs:
       - run:
           name: Get Google Gloud credentials
           command: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-      - run:
-          name: Upgrading maven
-          command: apt-get --only-upgrade install maven
       - run: 
           name: Resolve dependencies
           command: mvn dependency:go-offline
