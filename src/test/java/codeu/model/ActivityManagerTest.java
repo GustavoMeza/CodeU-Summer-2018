@@ -16,6 +16,8 @@ import codeu.view.ComponentProvider;
 import com.pusher.rest.Pusher;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Before;
@@ -92,14 +94,37 @@ public class ActivityManagerTest {
     for(Activity actualActivity : activityArgumentCaptor.getAllValues()) {
       Assert.assertEquals(actualActivity, expectedActivity);
     }
-    Mockito.verify(mockPusher).trigger(PusherProvider.ACTIVITY_CHANNEL, PusherProvider.NEW_ACTIVITY,
-        Collections.singletonMap("view", "HTML code"));
 
+    // Message sent through Pusher to Activity feed contains the right information
+    ArgumentCaptor<Map> mapArgumentCaptor = ArgumentCaptor.forClass(Map.class);
+    Map<String, String> expectedMessage = new HashMap<>();
+    expectedMessage.put("view", "HTML code");
+
+    Mockito.verify(mockPusher).trigger(Mockito.eq(PusherProvider.ACTIVITY_CHANNEL),
+        Mockito.eq(PusherProvider.NEW_ACTIVITY),
+        mapArgumentCaptor.capture());
+
+    Assert.assertEquals(mapArgumentCaptor.getValue(), expectedMessage);
+
+    // Creating the View for the right Message
     ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+
     Mockito.verify(mockComponentProvider).messageSentInChat(messageArgumentCaptor.capture());
+
     Assert.assertEquals(messageArgumentCaptor.getValue(), mockMessage);
-    Mockito.verify(mockPusher).trigger(PusherProvider.CHAT_CHANNEL, PusherProvider.MESSAGE_SENT,
-        Collections.singletonMap("view", "HTML code"));
+
+    // Message sent through Pusher to Chat contains the right information
+    expectedMessage = new HashMap<>();
+    expectedMessage.put("view", "HTML code");
+    expectedMessage.put("id", mockMessage.getId().toString());
+    expectedMessage.put("parentId", mockMessage.getParentId().toString());
+    mapArgumentCaptor = ArgumentCaptor.forClass(Map.class);
+
+    Mockito.verify(mockPusher).trigger(Mockito.eq(PusherProvider.CHAT_CHANNEL),
+        Mockito.eq(PusherProvider.MESSAGE_SENT),
+        mapArgumentCaptor.capture());
+
+    Assert.assertEquals(expectedMessage, mapArgumentCaptor.getValue());
   }
 
   @Test

@@ -98,38 +98,30 @@ public class ComponentProvider {
    * @return String with the message layout in Chat View.
    */
   public String messageSentInChat(Message message) {
-    StringBuilder formattedChat = new StringBuilder();
-
-    // Parent part of layout
-    if(message.getParentId() != null) {
-      Message parent = MessageStore.getInstance().getMessage(message.getParentId());
-      String formattedParent = String.format("<div class=\"parent\">%s</div>&#8618;",
-          formatMessageInChat(parent));
-      formattedChat.append(formattedParent);
-    }
-
-    // Message part of layout
-    formattedChat.append(formatMessageInChat(message));
-
-    // Reply label to be shown as information to send messages
-    String replyLabel = formatMessageInChat(message);
-
-    // Label is going to be passed as a string argument, so it should be processed
-    // for instance <a href="/">link</a> should be <a href=\"/\">link</a>
-    StringBuilder replyLabelArgument = new StringBuilder();
-    for(char c : replyLabel.toCharArray()) {
-      if(c == '\"') replyLabelArgument.append("\\");
-      replyLabelArgument.append(c);
-    }
+    String imageUrl = "http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png";
 
     // Button part of layout
-    String replyButton = String.format(
-        "<button onclick='reply(\"%s\", \"%s\")' class='transparent'>&#8618;</button>",
-        message.getId().toString(),
-        replyLabelArgument.toString());
-    formattedChat.append(replyButton);
+    String onclick = String.format("onclick='reply(\"%s\", \"%s\")'",
+        message.getId(), message.getContent());
 
-    return formattedChat.toString();
+    StringBuilder stringBuilder = new StringBuilder();
+
+    stringBuilder.append("<div class=\"message-group-view\">");
+      stringBuilder.append("<div class=\"profile-image\">");
+        stringBuilder.append("<img src=\"" + imageUrl + "\" class=\"avatar\">");
+      stringBuilder.append("</div>");
+      stringBuilder.append("<div class=\"message-card\">");
+        stringBuilder.append("<div class=\"message-header\">");
+          stringBuilder.append(formatUserName(message.getAuthorId()));
+          stringBuilder.append(" <span>" + formatCreationTime(message.getCreationTime()) + "</span>");
+        stringBuilder.append("</div>");
+        stringBuilder.append("<div class=\"message-content\" " + onclick + ">");
+          stringBuilder.append(message.getContent());
+        stringBuilder.append("</div>");
+      stringBuilder.append("</div>");
+    stringBuilder.append("</div>");
+
+    return stringBuilder.toString();
   }
 
 
