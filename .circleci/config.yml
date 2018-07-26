@@ -24,15 +24,12 @@ jobs:
           command: mvn test
   deploy-job:
     docker: 
-      - image: circleci/openjdk:8-jdk
+      - image: mrsvan/google-cloud-sdk-app-engine-java
+        auth:
+          username: _json_key
+          password: $GCLOUD_SERVICE_KEY
     steps:
       - checkout
-      - run:
-          name: Setting up Google Cloud SDK
-          command: cd / && \
-                   curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
-                   apt-get update -y && apt-get install google-cloud-sdk -y && \
-                   cd ~/project
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
