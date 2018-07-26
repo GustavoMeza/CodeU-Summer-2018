@@ -27,18 +27,16 @@ jobs:
       - image: mrsvan/google-cloud-sdk-app-engine-java:jdk8-latest
     steps:
       - checkout
+      - run: 
+          name: Resolve dependencies
+          command: mvn dependency:go-offline
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
       - run:
-          name: Get Google Gloud credentials
-          command: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-      - run: 
-          name: Resolve dependencies
-          command: mvn dependency:go-offline
-      - run: 
-          name: Deploy Master to GCP
-          command: rm ~/.appcfg_oauth2_tokens_java && mvn appengine:update
+          name: Deploy!
+          command: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json && \
+                   mvn appengine:update
 workflows:
   version: 2
   build-test-deploy:
