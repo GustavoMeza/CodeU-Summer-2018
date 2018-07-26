@@ -32,13 +32,13 @@ jobs:
           command: mvn dependency:go-offline
       - run:
           name: Store Service Account
-          command: echo $GCLOUD_SERVICE_KEY > $GCLOUD_KEY_FILE
+          command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
       - run:
           name: Activate GCP credentials
-          command: gcloud auth activate-service-account --key-file=$GCLOUD_KEY_FILE --project=$GOOGLE_PROJECT_ID
+          command: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json --project=$GOOGLE_PROJECT_ID
       - run:
           name: Deploy master to GCP
-          command: mvn appengine:update -Dappengine.additionalParams="--service_account_json_key_file=$GCLOUD_KEY_FILE"
+          command: mvn appengine:update -Dappengine.additionalParams="--service_account_json_key_file=${HOME}/gcloud-service-key.json"
 workflows:
   version: 2
   build-test-deploy:
