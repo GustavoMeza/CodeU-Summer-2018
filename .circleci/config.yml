@@ -34,9 +34,11 @@ jobs:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
       - run:
-          name: Deploy!
-          command: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json && \
-                   mvn appengine:update
+          name: Activate GCP credentials
+          command: gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json --project=$GOOGLE_PROJECT_ID
+      - run:
+          name: Deploy master to GCP
+          command: mvn appengine:update
 workflows:
   version: 2
   build-test-deploy:
