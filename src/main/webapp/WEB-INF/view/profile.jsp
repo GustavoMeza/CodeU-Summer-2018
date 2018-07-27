@@ -9,10 +9,13 @@
 <%@ page import="java.time.ZonedDateTime" %>
 <%@ page import="java.time.ZoneId" %>
 <%@ page import="java.time.ZoneOffset" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreService" %>
+<%@ page import="com.google.appengine.api.blobstore.BlobstoreServiceFactory" %>
 <%
   String username = (String) request.getAttribute("username");
   User user = (User) request.getAttribute("user");
   List<Message> messagesByUser = (List<Message>) request.getAttribute("messagesByUser");
+  BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 %>
 
 <!DOCTYPE html>
@@ -53,21 +56,19 @@
   <h1><%= username %>'s Profile Page</h1>
   <hr/>
 
-  <img src="defaultavatar.png" alt= "Default Avatar" >
+  <% String avatarUrl = user.getAvatarImage(); %>
 
+  <img src="<%=avatarUrl == null ? "/css/default-profile.png" : avatarUrl%>" alt="profile-image">
   <!-- Ensures that the user who is logged in is the only one able to update Profile Image-->
 
   <% if(request.getSession().getAttribute("user") != null) { %>
   <% if(request.getSession().getAttribute("user").equals(request.getAttribute("username"))) { %>
-  <form action="/users/<%= username %>" method="POST">
+  <form action="<%= blobstoreService.createUploadUrl("/users/" + username) %>" method="POST" enctype="multipart/form-data">
     <div class="form-group">
       <label>Upload image</label>
       <!-- Allow only image file types to be selected -->
       <input type="file" name="image" accept="image/*">
     </div>
-
-    <input type="hidden" name="_method" value="upload-image" />
-
     <button type="submit">Save</button>
   </form>
   <% } %>
@@ -87,8 +88,6 @@
   <form action="/users/<%= username %>" method="POST">
     <textarea name="About Me" cols="40" rows="5"> </textarea>
     <br/>
-
-    <input type="hidden" name="_method" value="upload-aboutme" />
     <button type="submit">Update</button>
   </form>
   <% } %>

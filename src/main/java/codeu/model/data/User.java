@@ -14,9 +14,15 @@
 
 package codeu.model.data;
 
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.datastore.Blob;
+import com.google.appengine.api.datastore.Text;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.ServingUrlOptions;
+import com.google.appengine.repackaged.com.google.api.client.util.Base64;
+import java.io.UnsupportedEncodingException;
 import java.time.Instant;
 import java.util.UUID;
-import java.util.Date;
 
 /** Class representing a registered user. */
 public class User {
@@ -26,11 +32,11 @@ public class User {
   private final Instant creation;
   private String aboutMe;
   private Instant lastLogin;
+  private BlobKey avatarKey;
 
   /**
    * Constructs a new User.
-   *
-   * @param id the ID of this User
+   *  @param id the ID of this User
    * @param name the username of this User
    * @param passwordHash the password hash of this User
    * @param creation the creation time of this User
@@ -80,5 +86,20 @@ public class User {
   /** Returns is the user was active yesterday or not. */
   public void setLastLogin(Instant login){
     this.lastLogin = login;
+  }
+
+  public BlobKey getAvatarKey() {
+    return avatarKey;
+  }
+
+  public void setAvatarKey(BlobKey avatarKey) {
+    this.avatarKey = avatarKey;
+  }
+
+  public String getAvatarImage() {
+    if(avatarKey == null) return null;
+    ServingUrlOptions options = ServingUrlOptions.Builder
+        .withBlobKey(avatarKey);
+    return ImagesServiceFactory.getImagesService().getServingUrl(options);
   }
 }
