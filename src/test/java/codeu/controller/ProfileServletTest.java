@@ -135,8 +135,7 @@ public class ProfileServletTest {
            .thenReturn("Hi I am D'Nae");
        Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
 
-      Map<String, List<BlobKey>> mockBlobs = new HashMap<>();
-      Mockito.when(mockBlobstoreService.getUploads(mockRequest)).thenReturn(mockBlobs);
+      Mockito.when(mockBlobstoreService.getUploads(mockRequest)).thenThrow(new IllegalStateException());
 
        User fakeUser = new User(
            UUID.randomUUID(),
@@ -190,8 +189,7 @@ public class ProfileServletTest {
     Mockito.when(mockSession.getAttribute("user")).thenReturn("test_username");
 
 
-       Map<String, List<BlobKey>> mockBlobs = new HashMap<>();
-       Mockito.when(mockBlobstoreService.getUploads(mockRequest)).thenReturn(mockBlobs);
+       Mockito.when(mockBlobstoreService.getUploads(mockRequest)).thenThrow(new IllegalStateException());
 
     User fakeUser = new User(
         UUID.randomUUID(),

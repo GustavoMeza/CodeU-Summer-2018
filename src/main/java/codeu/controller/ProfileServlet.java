@@ -119,18 +119,16 @@ public class ProfileServlet extends HttpServlet {
 
     //SETTING LAST LOGIN ATTRIBUTE
     user.setLastLogin(Instant.now());
-
-    Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
-    List<BlobKey> blobKeys = blobs.get("image");
-
-    if (blobKeys == null || blobKeys.isEmpty()) {
-      String aboutMeContent = request.getParameter("About Me");
-      // this removes any HTML from the message content
-      String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
-      user.setAboutMe(cleanedAboutMeContent);
-    } else {
-      user.setAvatarKey(blobKeys.get(0));
-    }
+     try {
+       Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
+       List<BlobKey> blobKeys = blobs.get("image");
+       user.setAvatarKey(blobKeys.get(0));
+     } catch (IllegalStateException e) {
+       String aboutMeContent = request.getParameter("About Me");
+       // this removes any HTML from the message content
+       String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
+       user.setAboutMe(cleanedAboutMeContent);
+     }
 
     userStore.updateUser(user);
 
