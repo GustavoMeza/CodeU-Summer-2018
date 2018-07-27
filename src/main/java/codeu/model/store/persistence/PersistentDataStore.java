@@ -17,12 +17,15 @@ package codeu.model.store.persistence;
 import codeu.model.data.Conversation;
 import codeu.model.data.Message;
 import codeu.model.data.User;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Text;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +69,11 @@ public class PersistentDataStore {
         String userName = (String) entity.getProperty("username");
         String passwordHash = (String) entity.getProperty("password_hash");
         Instant creationTime = Instant.parse((String) entity.getProperty("creation_time"));
+        String aboutme = (String) entity.getProperty("about_me");
+        BlobKey avatarKey = (BlobKey) entity.getProperty("avatar_key");
         User user = new User(uuid, userName, passwordHash, creationTime);
+        user.setAvatarKey(avatarKey);
+        user.setAboutMe(aboutme);
         users.add(user);
       } catch (Exception e) {
         // In a production environment, errors should be very rare. Errors which may
@@ -158,6 +165,7 @@ public class PersistentDataStore {
     userEntity.setProperty("password_hash", user.getPasswordHash());
     userEntity.setProperty("creation_time", user.getCreationTime().toString());
     userEntity.setProperty("about_me", user.getAboutMe());
+    userEntity.setProperty("avatar_key", user.getAvatarKey());
     datastore.put(userEntity);
   }
 

@@ -18,20 +18,19 @@ import codeu.model.data.Message;
 import codeu.model.data.User;
 import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import java.time.Instant;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
-
-import org.mindrot.jbcrypt.BCrypt;
 
 /** Servlet class responsible for the profile page. */
 public class ProfileServlet extends HttpServlet {
@@ -42,6 +41,8 @@ public class ProfileServlet extends HttpServlet {
   /** Store class that gives access to Messages. */
   private MessageStore messageStore;
 
+  private BlobstoreService blobstoreService;
+
   /**
    * Set up state for handling profile-related requests. This method is only called when running in a
    * server, not when running in a test.
@@ -51,6 +52,7 @@ public class ProfileServlet extends HttpServlet {
     super.init();
     setUserStore(UserStore.getInstance());
     setMessageStore(MessageStore.getInstance());
+    setBlobstoreService(BlobstoreServiceFactory.getBlobstoreService());
   }
 
   /**
@@ -67,6 +69,10 @@ public class ProfileServlet extends HttpServlet {
   void setMessageStore(MessageStore messageStore) {
      this.messageStore = messageStore;
    }
+
+  public void setBlobstoreService(BlobstoreService blobstoreService) {
+    this.blobstoreService = blobstoreService;
+  }
 
   /**
    * This function fires when a user requests the /profile URL. It simply forwards the request to
@@ -113,19 +119,21 @@ public class ProfileServlet extends HttpServlet {
 
     //SETTING LAST LOGIN ATTRIBUTE
     user.setLastLogin(Instant.now());
+     try {
+       Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
+       List<BlobKey> blobKeys = blobs.get("image");
+       user.setAvatarKey(blobKeys.get(0));
+     } catch (IllegalStateException e) {
+       String aboutMeContent = request.getParameter("About Me");
+       // this removes any HTML from the message content
+       String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
+       user.setAboutMe(cleanedAboutMeContent);
+     }
 
-
-    String aboutMeContent = request.getParameter("About Me");
-
-    // this removes any HTML from the message content
-    String cleanedAboutMeContent = Jsoup.clean(aboutMeContent, Whitelist.none());
-      user.setAboutMe(cleanedAboutMeContent);
-      userStore.updateUser(user);
-
+    userStore.updateUser(user);
 
     // redirect to a GET request
     response.sendRedirect("/users/" + username);
   }
-
 
 }
