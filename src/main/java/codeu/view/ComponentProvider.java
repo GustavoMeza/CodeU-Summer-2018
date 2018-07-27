@@ -98,17 +98,30 @@ public class ComponentProvider {
    * @return String with the message layout in Chat View.
    */
   public String messageSentInChat(Message message) {
+    String imageUrl = "http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png";
 
-      // Button part of layout
-      String replyButton = String.format(
-          "<button onclick='reply(\"%s\", \"%s\")' class='transparent'>&#8594;</button>",
-          message.getId(), message.getContent());
+    // Button part of layout
+    String onclick = String.format("onclick='reply(\"%s\", \"%s\")'",
+        message.getId(), message.getContent());
 
-      return String.format("<div style=\"width:auto\">%s: %s %s %s</div>",
-          formatUserName(message.getAuthorId()),
-          formatMessage(message.getId()),
-          formatCreationTime(message.getCreationTime()),
-          replyButton);
+    StringBuilder stringBuilder = new StringBuilder();
+
+    stringBuilder.append("<div class=\"message-group-view\">");
+      stringBuilder.append("<div class=\"profile-image\">");
+        stringBuilder.append("<img src=\"" + imageUrl + "\" class=\"avatar\">");
+      stringBuilder.append("</div>");
+      stringBuilder.append("<div class=\"message-card\">");
+        stringBuilder.append("<div class=\"message-header\">");
+          stringBuilder.append(formatUserName(message.getAuthorId()));
+          stringBuilder.append(" <span>" + formatCreationTime(message.getCreationTime()) + "</span>");
+        stringBuilder.append("</div>");
+        stringBuilder.append("<div class=\"message-content\" " + onclick + ">");
+          stringBuilder.append(message.getContent());
+        stringBuilder.append("</div>");
+      stringBuilder.append("</div>");
+    stringBuilder.append("</div>");
+
+    return stringBuilder.toString();
   }
 
 

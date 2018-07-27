@@ -115,6 +115,8 @@ public class ActivityManager {
     view = componentProvider.messageSentInChat(message);
     Map<String, String> map = new HashMap<>();
     map.put("view", view);
+    map.put("id", message.getId().toString());
+    map.put("parentId", message.getParentId() == null ? "" : message.getParentId().toString());
     pusher.trigger(PusherProvider.CHAT_CHANNEL, PusherProvider.MESSAGE_SENT, map);
   }
 }
