@@ -17,23 +17,24 @@ public class PusherProvider {
   public static final String MESSAGE_SENT = "message-sent";
 
   /** The key for out pusher app */
-  public static final String PUSHER_KEY = "1845b37e6fec77ec1a14";
+  public static final String PUSHER_KEY = System.getenv("PUSHER_APP_KEY");
+
+  public static final String PUSHER_CLUSTER = System.getenv("PUSHER_CLUSTER");
+  public static final String PUSHER_ID = System.getenv("PUSHER_APP_ID");
+  public static final String PUSHER_SECRET = System.getenv("PUSHER_APP_SECRET");
 
   /** The singleton Pusher instance*/
-  private static final Pusher pusher;
-
-  /** Initialization of the Pusher instance */
-  static {
-    pusher = new Pusher("547303", PUSHER_KEY, "922690b9fa9b5664364c");
-    pusher.setCluster("us2");
-    pusher.setEncrypted(true);
-  }
+  private static Pusher pusher;
 
   /**
    * Static method that returns the singleton instance of Pusher
    * @return A Pusher instance
    */
   public static Pusher getService() {
+    if(pusher != null) return pusher;
+    pusher = new Pusher(PUSHER_ID, PUSHER_KEY, PUSHER_SECRET);
+    pusher.setCluster(PUSHER_CLUSTER);
+    pusher.setEncrypted(true);
     return pusher;
   }
 }
