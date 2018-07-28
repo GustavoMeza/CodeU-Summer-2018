@@ -27,6 +27,7 @@ public class PusherProvider {
     pusher = new Pusher("547303", PUSHER_KEY, "922690b9fa9b5664364c");
     pusher.setCluster("us2");
     pusher.setEncrypted(true);
+    pusher.setRequestTimeout(10000);
   }
 
   /**
