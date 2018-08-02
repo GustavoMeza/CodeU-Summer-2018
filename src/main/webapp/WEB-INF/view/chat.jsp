@@ -17,8 +17,8 @@
 <%@ page import="codeu.model.data.Message" %>
 <%@ page import="codeu.model.store.basic.UserStore" %>
 <%@ page import="codeu.model.store.basic.MessageStore" %>
--<%@ page import="codeu.model.PusherProvider" %>
--<%@ page import="codeu.view.ComponentProvider" %>
+<%@ page import="codeu.model.PusherProvider" %>
+<%@ page import="codeu.view.ComponentProvider" %>
 <%@ page import="java.util.UUID" %>
 <%@ page import="java.util.Stack" %>
 
