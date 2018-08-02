@@ -14,6 +14,8 @@ import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import codeu.view.ComponentProvider;
 import com.pusher.rest.Pusher;
+import com.pusher.rest.data.Result;
+import com.pusher.rest.data.Result.Status;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +37,7 @@ public class ActivityManagerTest {
   private Pusher mockPusher;
   private ComponentProvider mockComponentProvider;
   private ActivityStore mockActivityStore;
+  private Result mockResult;
 
   private User mockUser = new User(UUID.randomUUID(), "Juan", "HashedPassword",
       Instant.now());
@@ -51,6 +54,9 @@ public class ActivityManagerTest {
     mockPusher = Mockito.mock(Pusher.class);
     mockComponentProvider = Mockito.mock(ComponentProvider.class);
     mockActivityStore = Mockito.mock(ActivityStore.class);
+    mockResult = Mockito.mock(Result.class);
+    Mockito.when(mockPusher.trigger(any(String.class), any(), any())).thenReturn(mockResult);
+    Mockito.when(mockResult.getStatus()).thenReturn(Status.SUCCESS);
 
     activityManager = ActivityManager.getTestInstance(mockUserStore, mockMessageStore,
         mockConversationStore, mockPusher, mockComponentProvider, mockActivityStore);

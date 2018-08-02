@@ -12,6 +12,7 @@ import codeu.model.store.basic.UserStore;
 import codeu.view.ComponentProvider;
 import com.pusher.rest.Pusher;
 import com.pusher.rest.data.Result;
+import com.pusher.rest.data.Result.Status;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
