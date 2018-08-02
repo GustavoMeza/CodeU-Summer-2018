@@ -11,6 +11,7 @@ import codeu.model.store.basic.MessageStore;
 import codeu.model.store.basic.UserStore;
 import codeu.view.ComponentProvider;
 import com.pusher.rest.Pusher;
+import com.pusher.rest.data.Result;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,7 +111,7 @@ public class ActivityManager {
     Activity activity = new Activity(Type.MessageSent, message.getId(), message.getCreationTime());
     activityStore.addActivity(activity);
     String view = componentProvider.messageSent(activity);
-    pusher.trigger(PusherProvider.ACTIVITY_CHANNEL, PusherProvider.NEW_ACTIVITY,
+    Result pusherResult = pusher.trigger(PusherProvider.ACTIVITY_CHANNEL, PusherProvider.NEW_ACTIVITY,
         Collections.singletonMap("view", view));
     view = componentProvider.messageSentInChat(message);
     Map<String, String> map = new HashMap<>();
