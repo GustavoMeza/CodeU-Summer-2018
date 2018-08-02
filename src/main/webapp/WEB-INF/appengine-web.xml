@@ -18,7 +18,13 @@
     <application>binary-search-three</application>
     <url-stream-handler>urlfetch</url-stream-handler>
     <version>1</version>
-    <threadsafe>false</threadsafe>
+    <threadsafe>true</threadsafe>
+    <env-variables>
+      <env-var name="PUSHER_APP_ID" value="547303" />
+      <env-var name="PUSHER_APP_KEY" value = "1845b37e6fec77ec1a14" />
+      <env-var name="PUSHER_APP_SECRET" value = "922690b9fa9b5664364c" />
+      <env-var name="PUSHER_CLUSTER" value="us2" />
+    </env-variables>
     <sessions-enabled>true</sessions-enabled>
     <runtime>java8</runtime>
 </appengine-web-app>
